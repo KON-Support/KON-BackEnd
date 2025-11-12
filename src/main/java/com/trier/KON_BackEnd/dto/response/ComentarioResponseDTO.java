@@ -1,4 +1,12 @@
 package com.trier.KON_BackEnd.dto.response;
 
-public record ComentarioResponseDTO() {
+import java.time.LocalDateTime;
+
+public record ComentarioResponseDTO(
+        Long cdComentario,
+        Chamado cdChamado,
+        Usuario cdUsuario,
+        String dsConteudo,
+        LocalDateTime dtCriacao
+) {
 }
