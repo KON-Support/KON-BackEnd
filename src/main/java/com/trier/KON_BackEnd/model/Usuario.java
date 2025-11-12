@@ -1,0 +1,45 @@
+package com.trier.KON_BackEnd.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "TBUSUARIO")
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cdUsuario;
+
+    @Column(nullable = false)
+    private String nmUsuario;
+
+    @Column(nullable = false)
+    private String dsSenha;
+
+    @Column(unique = true, nullable = false)
+    private String dsEmail;
+
+    private String dsAvatarUrl;
+
+    @CreationTimestamp
+    private LocalDateTime dtCriacao;
+
+    private LocalDateTime dtUltimoAcesso;
+
+    private boolean flAtivo;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "TBUSUARIOROLES",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role = new HashSet<>();
+
+}
