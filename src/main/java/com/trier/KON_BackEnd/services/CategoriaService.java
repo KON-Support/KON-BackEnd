@@ -77,6 +77,26 @@ public class CategoriaService {
     }
 
     @Transactional
+    public CategoriaResponseDTO reativarCategoria(Long cdCategoria) {
+
+        var categoria = categoriaRepository.findById(cdCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
+
+        categoria.setFlAtivo(true);
+
+        categoriaRepository.save(categoria);
+
+        return new CategoriaResponseDTO(
+
+                categoria.getCdCategoria(),
+                categoria.getNmCategoria(),
+                categoria.getFlAtivo()
+
+        );
+
+    }
+
+    @Transactional
     public CategoriaResponseDTO listarCategoria(Long cdCategoria) {
 
         var categoria = categoriaRepository.findById(cdCategoria)
