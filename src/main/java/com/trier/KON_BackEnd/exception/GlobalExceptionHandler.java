@@ -27,4 +27,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity.status(404).body(response);
     }
+    @ExceptionHandler(AnexoNaoEncontradoException.class)
+    private ResponseEntity<?> AnexoNaoEncontradoException(AnexoNaoEncontradoException exception) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(404).body(response);
+    }
 }
