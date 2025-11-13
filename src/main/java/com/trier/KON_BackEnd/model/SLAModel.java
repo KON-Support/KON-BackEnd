@@ -20,16 +20,15 @@ import java.time.format.DateTimeFormatter;
 public class SLAModel {
 
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long cdSLA;
+    private Long cdSLA;
 
-    Prioridade prioridade;
+    @Enumerated(EnumType.STRING)
+    private Prioridade prioridade;
 
-    LocalTime qtHorasResposta = LocalTime.now();
-    LocalDate dsHorasResposta = LocalDate.now();
+    private LocalDateTime qtHorasResposta = LocalDateTime.now();
 
-    LocalTime qtHorasResolucao = LocalTime.now();
-    LocalDate dsHorasResolucao = LocalDate.now();
+    private LocalDateTime qtHorasResolucao = LocalDateTime.now();
 
-    Boolean flAtivo;
+    private String flAtivo = "S";
 }
 

@@ -8,9 +8,7 @@ import java.time.LocalTime;
 
 public record SLAResponseDto(
         Prioridade prioridade,
-        LocalTime qtHorasResposta,
-        LocalDate dsHorasResposta,
-        LocalTime qtHorasResolucao,
-        LocalDate dsHorasResolucao
+        String qtHorasResposta,
+        String qtHorasResolucao
 ) {
 }
