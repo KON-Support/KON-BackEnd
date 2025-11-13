@@ -1,4 +1,13 @@
-package com.trier.KON_BackEnd.dto.SLA;
+package com.trier.KON_BackEnd.dto.sla;
 
-public record SLARequestDto() {
+import com.trier.KON_BackEnd.enums.Prioridade;
+
+import java.time.LocalDateTime;
+
+public record SLARequestDto(
+        Long cdSLA,
+        Prioridade prioridade,
+        LocalDateTime qtHorasResposta,
+        LocalDateTime qtHorasResolucao
+) {
 }
