@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface SLARepository extends JpaRepository<SLAModel, Long> {
     Optional<SLAModel> findByCdSLA  ( Long cdSLA );
-    Optional<SLAModel> findAll      ( Long cdSLA );
 }

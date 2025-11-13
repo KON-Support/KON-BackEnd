@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.datetime.DateFormatter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
@@ -22,15 +24,12 @@ public class SLAModel {
 
     Prioridade prioridade;
 
-    LocalDateTime qtHorasResposta = LocalDateTime.now();
+    LocalTime qtHorasResposta = LocalTime.now();
+    LocalDate dsHorasResposta = LocalDate.now();
 
-    LocalDateTime qtHorasResolucao = LocalDateTime.now();
+    LocalTime qtHorasResolucao = LocalTime.now();
+    LocalDate dsHorasResolucao = LocalDate.now();
 
     Boolean flAtivo;
-
-    DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-    String horasRepostaFormatada = qtHorasResposta.format(formatador);
-    String horasResolucaoFormatada = qtHorasResolucao.format(formatador);
-
 }
 

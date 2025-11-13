@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sla")
+@RequestMapping("/api/sla")
 @Tag(name = "SLA", description = "Capacidade de gerenciamento dos SLA")
 @CrossOrigin(origins = "*")
 public class SLAController {

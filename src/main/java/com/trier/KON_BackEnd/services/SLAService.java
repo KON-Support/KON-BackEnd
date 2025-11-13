@@ -19,13 +19,17 @@ public class SLAService {
         SLAModel sla = new SLAModel();
         sla.setPrioridade(slaRequestDto.prioridade());
         sla.setQtHorasResposta(slaRequestDto.qtHorasResposta());
+        sla.setDsHorasResolucao(slaRequestDto.dsHorasResposta());
         sla.setQtHorasResolucao(slaRequestDto.qtHorasResolucao());
+        sla.setDsHorasResolucao(slaRequestDto.dsHorasResolucao());
         SLAModel salvo = slaRepository.save(sla);
 
         return new SLAResponseDto(
             salvo.getPrioridade(),
             salvo.getQtHorasResposta(),
-            salvo.getQtHorasResolucao()
+            salvo.getDsHorasResposta(),
+            salvo.getQtHorasResolucao(),
+            salvo.getDsHorasResolucao()
         );
     }
 }
