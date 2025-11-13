@@ -23,10 +23,7 @@ public record UsuarioRequestDTO (
         @Size(max = 100, message = "O e-mail deve ter no máximo 100 caracteres")
         String dsEmail,
 
-        @NotBlank(message = ("É necessario cadastrar a data da criação"))
-        LocalDateTime dtCriacao,
 
-        LocalDateTime dtUltimoAcesso,
 
         @NotNull(message = "O status ativo é obrigatório")
         boolean flAtivo,
