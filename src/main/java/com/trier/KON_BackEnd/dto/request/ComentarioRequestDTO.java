@@ -1,5 +1,7 @@
 package com.trier.KON_BackEnd.dto.request;
 
+import com.trier.KON_BackEnd.model.ChamadoModel;
+import com.trier.KON_BackEnd.model.Usuario;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,7 +13,7 @@ public record ComentarioRequestDTO(
         Long cdComentario,
 
         @NotNull(message = "O campo 'cdChamado' é obrigatório.")
-        Chamado cdChamado,
+        ChamadoModel cdChamado,
 
         @NotNull(message = "O campo 'cdUsuario' é obrigatório.")
         Usuario cdUsuario,

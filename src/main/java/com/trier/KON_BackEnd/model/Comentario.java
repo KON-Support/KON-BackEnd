@@ -18,7 +18,7 @@ public class Comentario {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDCHAMADO", nullable = false)
-    private Chamado cdChamado;
+    private ChamadoModel cdChamado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDUSUARIO", nullable = false)
