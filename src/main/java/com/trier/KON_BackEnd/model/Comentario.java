@@ -28,7 +28,7 @@ public class Comentario {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
     @JoinColumn(name = "CDUSUARIO", nullable = false)
-    private Usuario cdUsuario;
+    private UsuarioModel cdUsuarioModel;
 
     @Column(name = "DSCONTEUDO", nullable = false)
     private String dsConteudo;
