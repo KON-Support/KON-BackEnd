@@ -3,6 +3,7 @@ package com.trier.KON_BackEnd.dto.request;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record UsuarioRequestDTO (
         Long cdUsuario,
@@ -22,15 +23,15 @@ public record UsuarioRequestDTO (
         @Size(max = 100, message = "O e-mail deve ter no máximo 100 caracteres")
         String dsEmail,
 
-        String dsAvatarUrl,
-
         @NotBlank(message = ("É necessario cadastrar a data da criação"))
         LocalDateTime dtCriacao,
 
         LocalDateTime dtUltimoAcesso,
 
         @NotNull(message = "O status ativo é obrigatório")
-        boolean flAtivo
+        boolean flAtivo,
+
+        List<String>roles
 ) {
 
 

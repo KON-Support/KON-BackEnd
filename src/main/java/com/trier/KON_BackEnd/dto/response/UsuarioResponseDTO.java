@@ -5,13 +5,11 @@ import java.time.LocalDateTime;
 
 public record UsuarioResponseDTO (
 
-        String nmUsuario,
+        Long cdUsuario, String nmUsuario,
 
         String dsSenha,
 
         String dsEmail,
-
-        String dsAvatarUrl,
 
         LocalDateTime dtCriacao,
 
