@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "TBUSUARIO")
-public class Usuario {
+public class UsuarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdUsuario;
@@ -27,8 +27,6 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String dsEmail;
 
-    private String dsAvatarUrl;
-
     @CreationTimestamp
     private LocalDateTime dtCriacao;
 
@@ -40,6 +38,6 @@ public class Usuario {
     @JoinTable(name = "TBUSUARIOROLES",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> role = new HashSet<>();
+    private Set<RoleModel> roleModel = new HashSet<>();
 
 }
