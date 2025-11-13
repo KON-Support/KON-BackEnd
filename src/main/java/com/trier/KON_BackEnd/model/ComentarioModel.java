@@ -17,7 +17,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "TBCOMENTARIO")
-public class Comentario {
+public class ComentarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdComentario;

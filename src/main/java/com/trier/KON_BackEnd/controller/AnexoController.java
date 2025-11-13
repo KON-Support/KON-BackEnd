@@ -4,6 +4,8 @@ import com.trier.KON_BackEnd.dto.request.AnexoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.AnexoResponseDTO;
 import com.trier.KON_BackEnd.services.AnexoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,24 +20,21 @@ public class AnexoController {
     private AnexoService anexoService;
 
     @PostMapping("/upload")
-    public AnexoResponseDTO uploadArquivo(@RequestParam("file") MultipartFile file,
-                                        @RequestBody AnexoRequestDTO anexoRequest) throws Exception {
-        AnexoResponseDTO response = anexoService.uploadArquivo(anexoRequest, file);
+    public ResponseEntity<AnexoResponseDTO> uploadArquivo(@RequestParam("file") MultipartFile file,
+                                                         @RequestBody AnexoRequestDTO anexoRequest) throws Exception {
 
-        return response;
+        return ResponseEntity.status(HttpStatus.CREATED).body(anexoService.uploadArquivo(anexoRequest, file));
     }
 
     @GetMapping("/baixar/{cdAnexo}")
-    public AnexoResponseDTO downloadArquivo(@PathVariable("cdAnexo") Long cdAnexo) {
-        AnexoResponseDTO response = anexoService.downloadArquivo(cdAnexo);
+    public ResponseEntity<AnexoResponseDTO> downloadArquivo(@PathVariable("cdAnexo") Long cdAnexo) {
 
-        return response;
+        return ResponseEntity.status(HttpStatus.OK).body(anexoService.downloadArquivo(cdAnexo));
     }
 
     @GetMapping("/anexos")
-    public List<AnexoResponseDTO> listarAnexos() {
-        List<AnexoResponseDTO> response = anexoService.listarAnexos();
+    public ResponseEntity<List<AnexoResponseDTO>> listarAnexos() {
 
-        return response;
+        return ResponseEntity.status(HttpStatus.OK).body(anexoService.listarAnexos());
     }
 }
