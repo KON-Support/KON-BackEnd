@@ -5,6 +5,7 @@ import com.trier.KON_BackEnd.dto.response.AnexoResponseDTO;
 import com.trier.KON_BackEnd.services.AnexoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +20,9 @@ public class AnexoController {
     @Autowired
     private AnexoService anexoService;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AnexoResponseDTO> uploadArquivo(@RequestParam("file") MultipartFile file,
-                                                         @RequestBody AnexoRequestDTO anexoRequest) throws Exception {
+                                                          @ModelAttribute("anexo") AnexoRequestDTO anexoRequest) throws Exception {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(anexoService.uploadArquivo(anexoRequest, file));
     }

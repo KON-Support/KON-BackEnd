@@ -45,6 +45,7 @@ public class AnexoModel {
     private LocalTime hrUpload;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "ARQUIVO", nullable = false)
     private byte[] arquivo;
 }
