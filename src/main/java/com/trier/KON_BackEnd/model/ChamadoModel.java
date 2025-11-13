@@ -6,8 +6,11 @@ import com.trier.KON_BackEnd.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tb_chamados")
@@ -32,32 +35,38 @@ public class ChamadoModel {
     @Column(name = "STATUS")
     private Status status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "PRIORIDADE")
-    private Prioridade prioridade;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "USUARIO", referencedColumnName = "CDUSUARIO")
+    private UsuarioModel usuario;
 
-    /* @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "REPORTER", mappedBy = "CDUSUARIO")
-    private Usuario usuario;
+    /* @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ANEXO", referencedColumnName = "CDANEXO")
+    private Anexo anexo;
     */
 
-    /* @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CATEGORIA", mappedBy = "CDCATEGORIA")
-    private Categoria categoria;
-    */
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORIA", referencedColumnName = "CDCATEGORIA")
+    private CategoriaModel categoria;
+
+    @CreatedDate
+    @Column(name = "DTCRIACAO")
+    private LocalDate dtCriacao;
 
     @CreationTimestamp
-    @Column(name = "DTCRIACAO")
-    private LocalDateTime dtCriacao;
-
-    @Column(name = "DTATUALIZACAO")
-    private LocalDateTime dtAtualizacao;
+    @Column(name = "HRCRIACAO")
+    private LocalTime hrCriacao;
 
     @Column(name = "DTFECHAMENTO")
-    private LocalDateTime dtFechamento;
+    private LocalDate dtFechamento;
+
+    @Column(name = "HRFECHAMENTO")
+    private LocalTime hrFechamento;
 
     @Column(name = "DTVENCIMENTO")
-    private LocalDateTime dtVencimento;
+    private LocalDate dtVencimento;
+
+    @Column(name = "HRVENCIMENTO")
+    private LocalTime hrVencimento;
 
     @Column(name = "FLSLAVIOLADO")
     private Boolean flSlaViolado;

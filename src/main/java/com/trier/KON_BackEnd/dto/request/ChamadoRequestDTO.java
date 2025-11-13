@@ -2,6 +2,7 @@ package com.trier.KON_BackEnd.dto.request;
 
 import com.trier.KON_BackEnd.enums.Prioridade;
 import com.trier.KON_BackEnd.enums.Status;
+import com.trier.KON_BackEnd.model.CategoriaModel;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,8 +21,8 @@ public record ChamadoRequestDTO(
         @Enumerated
         Status status,
 
-        @Enumerated
-        Prioridade prioridade,
+        @NotBlank(message = "É preciso informar o nome da categoria!")
+        CategoriaModel nmCategoria,
 
         @NotNull(message = "É preciso informar se o chamado está com o SLA violado ou não!")
         Boolean flSlaViolado
