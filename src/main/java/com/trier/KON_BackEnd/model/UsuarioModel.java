@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ public class UsuarioModel {
     @CreationTimestamp
     private LocalDateTime dtCriacao;
 
+    @LastModifiedDate
     private LocalDateTime dtUltimoAcesso;
 
     private boolean flAtivo;
