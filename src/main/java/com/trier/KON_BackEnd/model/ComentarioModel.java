@@ -22,22 +22,22 @@ public class ComentarioModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdComentario;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDCHAMADO", nullable = false)
-    private ChamadoModel cdChamado;
+    private ChamadoModel chamado;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDUSUARIO", nullable = false)
-    private UsuarioModel cdUsuarioModel;
+    private UsuarioModel usuario;
 
-    @Column(name = "DSCONTEUDO", nullable = false)
+    @Column(nullable = false)
     private String dsConteudo;
 
-    @Column(name = "HRCRIACAO", nullable = false)
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalTime hrCriacao;
 
-    @Column(name = "DTCRIACAO", nullable = false)
+    @Column(nullable = false)
     @CreatedDate
     private LocalDate dtCriacao;
 }

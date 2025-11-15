@@ -1,20 +1,17 @@
 package com.trier.KON_BackEnd.dto.request;
 
-import com.trier.KON_BackEnd.model.ChamadoModel;
-import com.trier.KON_BackEnd.model.UsuarioModel;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ComentarioRequestDTO(
 
         @NotNull(message = "O código do chamado é obrigatório.")
-        ChamadoModel cdChamado,
+        Long cdChamado,
 
-        @NotNull(message = "O código de Usuário é obrigatório.")
-        UsuarioModel cdUsuarioModel,
+        @NotNull(message = "O código do usuário é obrigatório.")
+        Long cdUsuario,
 
         @Size(min = 2, max = 1000, message = "O conteúdo deve ter entre 2 e 1000 caracteres.")
         String dsConteudo
-
 ) {
 }

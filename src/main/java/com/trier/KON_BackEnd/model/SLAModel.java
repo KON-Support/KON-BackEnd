@@ -1,16 +1,10 @@
 package com.trier.KON_BackEnd.model;
 
-import com.trier.KON_BackEnd.enums.Prioridade;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.datetime.DateFormatter;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Data
@@ -20,16 +14,22 @@ import java.time.format.DateTimeFormatter;
 public class SLAModel {
 
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long cdSLA;
+    private Long cdSLA;
 
-    Prioridade prioridade;
+    private Integer qtHorasResposta;
 
-    LocalTime qtHorasResposta = LocalTime.now();
-    LocalDate dsHorasResposta = LocalDate.now();
+    private Integer qtHorasResolucao;
 
-    LocalTime qtHorasResolucao = LocalTime.now();
-    LocalDate dsHorasResolucao = LocalDate.now();
+    private String flAtivo = "S";
 
-    Boolean flAtivo;
+    @JsonManagedReference
+    @ManyToOne
+    @JoinColumn(name = "cdUsuario")
+    private UsuarioModel usuario;
+
+    @JsonManagedReference
+    @ManyToOne
+    @JoinColumn(name = "cdCategoria")
+    private CategoriaModel categoria;
 }
 
