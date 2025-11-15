@@ -16,11 +16,11 @@ public record SLARequestDto(
 
         @NotNull(message = "Categoria é obrigatório")
         @Schema(description = "Categoria do sla", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-        CategoriaModel categoria,
+        Long cdCategoria,
 
         @NotNull(message = "Usaário é obrigatório")
         @Schema(description = "Usuário do sla", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-        UsuarioModel usuario,
+        Long cdUsuario,
 
         @Schema(description = "Data de resposta", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
         Integer qtHorasResposta,

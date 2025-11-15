@@ -31,4 +31,18 @@ public class SLAController {
         SLAResponseDto criardSla = slaService.criasSLA(slaRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criardSla);
     }
+
+    @PutMapping("/atualizar/{cdSLA}")
+    @Operation(summary = "Atualizar um SLA", description = "Atualiza um SLA já cadastrado")
+    public ResponseEntity<SLAResponseDto> atualizarSLA(@PathVariable Long cdSLA,
+                                                       @Valid @RequestBody SLARequestDto slaResquest){
+
+        try{
+            SLAResponseDto atualizado = slaService.autalizarSLA(slaResquest, cdSLA);
+            System.out.println("SLA atualizado");
+            return ResponseEntity.ok(atualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }

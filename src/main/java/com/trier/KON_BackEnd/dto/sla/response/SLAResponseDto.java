@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record SLAResponseDto(
-        CategoriaModel categoria,
-        UsuarioModel usuario,
+        Long cdCategoria,
+        Long cdUsuario,
         Integer qtHorasResposta,
         Integer qtHorasResolucao
 ) {
