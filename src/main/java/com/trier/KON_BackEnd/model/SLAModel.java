@@ -22,13 +22,18 @@ public class SLAModel {
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdSLA;
 
-    @Enumerated(EnumType.STRING)
-    private Prioridade prioridade;
+    private Integer qtHorasResposta;
 
-    private LocalDateTime qtHorasResposta = LocalDateTime.now();
-
-    private LocalDateTime qtHorasResolucao = LocalDateTime.now();
+    private Integer qtHorasResolucao;
 
     private String flAtivo = "S";
+
+    @ManyToOne
+    @JoinColumn(name = "cdUsuario")
+    private UsuarioModel usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "cdCategoria")
+    private CategoriaModel categoria;
 }
 
