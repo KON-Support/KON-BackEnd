@@ -1,6 +1,7 @@
 package com.trier.KON_BackEnd.controller;
 
 import com.trier.KON_BackEnd.dto.sla.SLARequestDto;
+import com.trier.KON_BackEnd.dto.sla.SLAResponseListar;
 import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.model.SLAModel;
 import com.trier.KON_BackEnd.repository.SLARepository;
@@ -44,5 +45,11 @@ public class SLAController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @GetMapping("/listar/todos")
+    @Operation(summary = "Listar os SLA", description = "Lista todos os SLA cadastrados")
+    public ResponseEntity<List<SLAResponseListar>> listarTodos(){
+        return ResponseEntity.status(HttpStatus.OK).body(slaService.listarSLA());
     }
 }
