@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface SLARepository extends JpaRepository<SLAModel, Long> {
     Optional<SLAModel> findByCdSLA  ( Long cdSLA );
     List<SLAModel> findAll ();
+    List<SLAModel> findByCategoriaCdCategoria(Long cdCategoria);
 }

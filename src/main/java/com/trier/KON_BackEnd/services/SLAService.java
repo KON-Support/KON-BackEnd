@@ -95,4 +95,25 @@ public class SLAService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<SLAResponseListar> buscarPorCategoria(Long cdCategoria) {
+        CategoriaModel categoria = catRepository.findById(cdCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + cdCategoria));
+
+        List<SLAModel> sla = slaRepository.findByCategoriaCdCategoria(cdCategoria);
+        if (sla.isEmpty()) {
+            throw new SLANaoEncontradoException("Nenhum SLA encontrado para a categoria: " + categoria.getNmCategoria());
+        }
+        return sla.stream()
+                .map(slas -> new SLAResponseListar(
+                        slas.getCdSLA(),
+                        slas.getCategoria().getNmCategoria(),
+                        slas.getUsuario().getNmUsuario(),
+                        slas.getQtHorasResposta(),
+                        slas.getQtHorasResolucao()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }
