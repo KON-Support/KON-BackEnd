@@ -1,7 +1,5 @@
 package com.trier.KON_BackEnd.model;
 
-
-import com.trier.KON_BackEnd.enums.Prioridade;
 import com.trier.KON_BackEnd.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -39,10 +36,9 @@ public class ChamadoModel {
     @JoinColumn(name = "USUARIO", referencedColumnName = "CDUSUARIO")
     private UsuarioModel usuario;
 
-    /* @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ANEXO", referencedColumnName = "CDANEXO")
-    private Anexo anexo;
-    */
+    private AnexoModel anexo;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORIA", referencedColumnName = "CDCATEGORIA")
