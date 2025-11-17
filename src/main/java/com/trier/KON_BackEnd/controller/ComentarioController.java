@@ -4,6 +4,8 @@ import com.trier.KON_BackEnd.dto.request.ComentarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ComentarioResponseDTO;
 import com.trier.KON_BackEnd.services.ComentarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,10 +29,11 @@ public class ComentarioController {
     @PostMapping("/criar")
     @Operation(summary = "Cria comentário", description = "Cria um comentário (mensagem) no chat")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comentário criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro na validação dos dados"),
-            @ApiResponse(responseCode = "404", description = "Código do usuário ou chamado não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "201", description = "Comentário criado com sucesso",
+            content = @Content(schema = @Schema(implementation = ComentarioResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Erro na validação dos dados", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Código do usuário ou chamado não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor",  content = @Content)
     })
     public ResponseEntity<ComentarioResponseDTO> criarComentario(@RequestBody
                                                                  @Valid ComentarioRequestDTO comentarioRequest) {
@@ -38,14 +41,16 @@ public class ComentarioController {
         );
     }
 
-    @GetMapping
-    @Operation(summary = "Lista comentários", description = "Lista todos os comentários do banco de dados")
+    @GetMapping("/chamado/{cdChamado}")
+    @Operation(summary = "Lista comentários", description = "Lista todos os comentários de um chamado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listando todos os comentários"),
-            @ApiResponse(responseCode = "404", description = "Nenhum comentário encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "200", description = "Listando todos os comentários",
+            content = @Content(schema = @Schema(implementation = ComentarioResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Nenhum comentário encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content)
     })
-    public ResponseEntity<List<ComentarioResponseDTO>> listarComentario() {
-        return ResponseEntity.status(HttpStatus.OK).body(comentarioService.listarComentarios());
+    public ResponseEntity<List<ComentarioResponseDTO>> listarComentario(@PathVariable Long cdChamado) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(comentarioService.listarComentarios(cdChamado));
     }
 }
