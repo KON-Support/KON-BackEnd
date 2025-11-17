@@ -49,10 +49,10 @@ public class ComentarioService {
     }
 
     @Transactional
-    public List<ComentarioResponseDTO> listarComentarios() {
+    public List<ComentarioResponseDTO> listarComentarios(Long cdChamado) {
         List<ComentarioResponseDTO> comentarios = new ArrayList<>();
 
-        List<ComentarioModel> comentarioModel = comentarioRepository.findAll();
+        List<ComentarioModel> comentarioModel = comentarioRepository.findAllByChamado_CdChamado(cdChamado);
         for(ComentarioModel comentario :  comentarioModel){
             comentarios.add(new ComentarioResponseDTO(comentario));
         }
