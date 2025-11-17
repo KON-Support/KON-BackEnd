@@ -32,7 +32,7 @@ public class UsuarioService {
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNmUsuario(dto.nmUsuario());
         usuario.setDsSenha(dto.dsSenha());
-        usuario.setDsEmail(dto.dsSenha());
+        usuario.setDsEmail(dto.dsEmail());
         usuario.setFlAtivo(dto.flAtivo());
 
         Set<RoleModel> roles = new HashSet<>();
