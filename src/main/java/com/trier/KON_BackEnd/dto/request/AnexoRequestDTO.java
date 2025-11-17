@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record AnexoRequestDTO(
-
         @Schema(description = "Código do chamado")
         @NotNull(message = "O código do chamado não pode ser vazio")
         Long cdChamado,
