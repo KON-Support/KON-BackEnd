@@ -22,13 +22,13 @@ public class AnexoModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdAnexo;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDCHAMADO", nullable = false)
-    private ChamadoModel cdChamado;
+    private ChamadoModel chamado;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CDUSUARIO", nullable = false)
-    private UsuarioModel cdUsuario;
+    private UsuarioModel usuario;
 
     @Column(name = "NMARQUIVO", nullable = false)
     private String nmArquivo;

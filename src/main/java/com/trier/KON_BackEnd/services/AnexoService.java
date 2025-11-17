@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,45 +31,44 @@ public class AnexoService {
     private ChamadoRepository chamadoRepository;
 
     @Transactional
-    public AnexoResponseDTO uploadArquivo(AnexoRequestDTO anexoRequest, MultipartFile file) throws IOException {
+    public AnexoResponseDTO uploadArquivo(AnexoRequestDTO anexoRequest) throws IOException {
         var usuario = usuarioRepository.findById(anexoRequest.cdUsuario())
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(anexoRequest.cdUsuario()));
 
         var chamado = chamadoRepository.findById(anexoRequest.cdChamado())
                 .orElseThrow(() -> new ChamadoNaoEncontradoException(anexoRequest.cdChamado()));
 
-        AnexoModel anexo = new AnexoModel();
+        AnexoModel anexoModel = new AnexoModel();
+        anexoModel.setChamado(chamado);
+        anexoModel.setUsuario(usuario);
+        anexoModel.setDtUpload(LocalDate.now());
+        anexoModel.setHrUpload(LocalTime.now());
 
-        anexo.setCdChamado(chamado);
-        anexo.setCdUsuario(usuario);
-        anexo.setNmArquivo(file.getName());
-        anexo.setDsTipoArquivo(file.getContentType());
-        anexo.setArquivo(file.getBytes());
+        MultipartFile arquivo = anexoRequest.anexo();
+        anexoModel.setNmArquivo(arquivo.getOriginalFilename());
+        anexoModel.setDsTipoArquivo(arquivo.getContentType());
+        anexoModel.setArquivo(arquivo.getBytes());
 
-        anexoRepository.save(anexo);
+        anexoRepository.save(anexoModel);
 
         return new AnexoResponseDTO(
-                anexo.getCdAnexo(),
-                anexo.getCdChamado().getCdChamado(),
-                anexo.getCdUsuario().getCdUsuario(),
-                anexo.getNmArquivo(),
-                anexo.getDsTipoArquivo()
+                anexoModel.getCdAnexo(),
+                anexoModel.getChamado().getCdChamado(),
+                anexoModel.getUsuario().getCdUsuario(),
+                anexoModel.getNmArquivo(),
+                anexoModel.getDsTipoArquivo(),
+                anexoModel.getDtUpload(),
+                anexoModel.getHrUpload()
         );
     }
 
     @Transactional
-    public AnexoResponseDTO downloadArquivo(Long cdAnexo) {
-        var anexo = anexoRepository.findById(cdAnexo)
-                .orElseThrow(() -> new AnexoNaoEncontradoException(cdAnexo));
+    public AnexoModel downloadArquivo(Long cdAnexo) {
 
-        return new AnexoResponseDTO(
-                anexo.getCdAnexo(),
-                anexo.getCdChamado().getCdChamado(),
-                anexo.getCdUsuario().getCdUsuario(),
-                anexo.getNmArquivo(),
-                anexo.getDsTipoArquivo()
-        );
+        return anexoRepository.findById(cdAnexo)
+                .orElseThrow(() -> new AnexoNaoEncontradoException(cdAnexo));
     }
+
     @Transactional
     public List<AnexoResponseDTO> listarAnexos() {
         List<AnexoResponseDTO> anexos = new ArrayList<>();
