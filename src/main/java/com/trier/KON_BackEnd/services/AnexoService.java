@@ -51,15 +51,7 @@ public class AnexoService {
 
         anexoRepository.save(anexoModel);
 
-        return new AnexoResponseDTO(
-                anexoModel.getCdAnexo(),
-                anexoModel.getChamado().getCdChamado(),
-                anexoModel.getUsuario().getCdUsuario(),
-                anexoModel.getNmArquivo(),
-                anexoModel.getDsTipoArquivo(),
-                anexoModel.getDtUpload(),
-                anexoModel.getHrUpload()
-        );
+        return new AnexoResponseDTO(anexoModel);
     }
 
     @Transactional
