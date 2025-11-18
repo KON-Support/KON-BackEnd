@@ -30,22 +30,22 @@ public class AnexoModel {
     @JoinColumn(name = "CDUSUARIO", nullable = false)
     private UsuarioModel usuario;
 
-    @Column(name = "NMARQUIVO", nullable = false)
+    @Column(nullable = false)
     private String nmArquivo;
 
-    @Column(name = "DSTIPOARQUIVO", nullable = false)
+    @Column(nullable = false)
     private String dsTipoArquivo;
 
-    @Column(name = "DTUPLOAD", nullable = false)
+    @Column(nullable = false)
     @CreatedDate
     private LocalDate dtUpload;
 
-    @Column(name = "HRCRIACAO", nullable = false)
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalTime hrUpload;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name = "ARQUIVO", nullable = false)
+    @Column(nullable = false)
     private byte[] arquivo;
 }

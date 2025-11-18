@@ -3,8 +3,10 @@ package com.trier.KON_BackEnd.services;
 
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
+import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.RoleModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
+import com.trier.KON_BackEnd.repository.PlanoRepository;
 import com.trier.KON_BackEnd.repository.RoleRepository;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
+    private final PlanoRepository planoRepository;
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
@@ -58,6 +61,16 @@ public class UsuarioService {
         }
 
         usuario.setRoleModel(roles);
+        usuario.setNuFuncionario(dto.nuFuncionario());
+
+        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUserAsc();
+
+        for (PlanoModel plano : planos) {
+            if (usuario.getNuFuncionario() < plano.getLimiteUser()) {
+                usuario.setPlano(plano);
+                break;
+            }
+        }
 
         UsuarioModel usuarioSalvo = usuarioRepository.save(usuario);
         return converterParaResponse(usuarioSalvo);
@@ -99,7 +112,8 @@ public class UsuarioService {
                 usuario.getDsSenha(),
                 usuario.getDtCriacao(),
                 usuario.getDtUltimoAcesso(),
-                usuario.isFlAtivo()
+                usuario.isFlAtivo(),
+                usuario.getPlano()
 
         );
     }

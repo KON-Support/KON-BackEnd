@@ -6,6 +6,8 @@ import com.trier.KON_BackEnd.model.AnexoModel;
 import com.trier.KON_BackEnd.services.AnexoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,10 +36,11 @@ public class AnexoController {
             description = "Realiza o upload de um arquivo para o sistema. O arquivo é salvo no banco de dados."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Arquivo enviado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro de validação nos dados enviados"),
-            @ApiResponse(responseCode = "404", description = "Usuário ou chamado não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "201", description = "Arquivo enviado com sucesso",
+                    content = @Content(schema = @Schema(implementation = AnexoResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de validação nos dados enviados", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Usuário ou chamado não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content)
     })
     public ResponseEntity<AnexoResponseDTO> uploadArquivo(@ModelAttribute
                                                           @Valid AnexoRequestDTO anexoRequest
@@ -53,9 +56,10 @@ public class AnexoController {
             description = "Realiza o download de um arquivo armazenado no banco de dados."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Arquivo baixado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Arquivo não encontrado no banco de dados"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "200", description = "Arquivo baixado com sucesso",
+                    content = @Content(schema = @Schema(implementation = AnexoResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Arquivo não encontrado no banco de dados", content =  @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content)
     })
     public ResponseEntity<byte[]> downloadArquivo(@Parameter(description = "ID do anexo", example = "12")
                                                   @PathVariable("cdAnexo") Long cdAnexo) {
@@ -73,8 +77,9 @@ public class AnexoController {
     @GetMapping("/anexos")
     @Operation(summary = "Listar arquivos", description = "Lista todos os arquivos do banco de dados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listando arquivos"),
-            @ApiResponse(responseCode = "500", description = "Erro no servidor")
+            @ApiResponse(responseCode = "200", description = "Listando arquivos",
+            content = @Content(schema = @Schema(implementation = AnexoResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Erro no servidor", content = @Content)
     })
     public ResponseEntity<List<AnexoResponseDTO>> listarAnexos() {
 

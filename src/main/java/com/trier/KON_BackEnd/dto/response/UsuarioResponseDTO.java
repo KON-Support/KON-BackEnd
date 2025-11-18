@@ -1,6 +1,8 @@
 package com.trier.KON_BackEnd.dto.response;
 
 
+import com.trier.KON_BackEnd.model.PlanoModel;
+
 import java.time.LocalDateTime;
 
 public record UsuarioResponseDTO (
@@ -15,8 +17,11 @@ public record UsuarioResponseDTO (
 
         LocalDateTime dtUltimoAcesso,
 
-        boolean flAtivo
+        boolean flAtivo,
 
+        Integer nuFuncionario,
+
+        PlanoModel plano
 
 ) {
 
