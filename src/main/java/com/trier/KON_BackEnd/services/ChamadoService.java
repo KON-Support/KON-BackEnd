@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class ChamadoService {
@@ -233,6 +234,38 @@ public class ChamadoService {
 
         );
 
+    }
+
+    @Transactional
+    public List<ChamadoResponseDTO> listarTodosChamados() {
+
+        List<ChamadoModel> chamado = chamadoRepository.findAll();
+
+        return chamado.stream().map(this:: convertToResponseDTO).toList();
+
+    }
+
+
+
+    private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
+        return new ChamadoResponseDTO(
+
+                chamado.getCdChamado(),
+                chamado.getDsTitulo(),
+                chamado.getDsDescricao(),
+                chamado.getStatus(),
+                chamado.getUsuario(),
+                chamado.getAnexo(),
+                chamado.getCategoria(),
+                chamado.getDtCriacao(),
+                chamado.getHrCriacao(),
+                chamado.getDtFechamento(),
+                chamado.getHrFechamento(),
+                chamado.getDtVencimento(),
+                chamado.getHrVencimento(),
+                chamado.getFlSlaViolado()
+
+        );
     }
 
 

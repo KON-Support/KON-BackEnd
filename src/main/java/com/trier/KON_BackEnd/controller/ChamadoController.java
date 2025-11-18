@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/chamado")
 
@@ -67,6 +69,17 @@ public class ChamadoController {
         return ResponseEntity.status(HttpStatus.OK).body(chamado);
 
     }
+
+    @GetMapping("/listar/todos")
+    public ResponseEntity<List<ChamadoResponseDTO>> listarTodosChamados() {
+
+        var chamado = chamadoService.listarTodosChamados();
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
+
 
 
 }
