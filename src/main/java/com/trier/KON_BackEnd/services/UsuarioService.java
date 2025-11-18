@@ -3,6 +3,7 @@ package com.trier.KON_BackEnd.services;
 
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
+import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.RoleModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
@@ -63,10 +64,10 @@ public class UsuarioService {
         usuario.setRoleModel(roles);
         usuario.setNuFuncionario(dto.nuFuncionario());
 
-        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUserAsc();
+        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosDesc();
 
         for (PlanoModel plano : planos) {
-            if (usuario.getNuFuncionario() < plano.getLimiteUser()) {
+            if (usuario.getNuFuncionario() >= plano.getLimiteUsuarios()) {
                 usuario.setPlano(plano);
                 break;
             }
@@ -85,7 +86,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponseDTO desativar(Long cdUsuario) {
         UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
 
         usuario.setFlAtivo(false);
         usuarioRepository.save(usuario);
@@ -96,7 +97,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponseDTO reativar(Long cdUsuario) {
         UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
 
         usuario.setFlAtivo(true);
         usuarioRepository.save(usuario);
@@ -113,8 +114,8 @@ public class UsuarioService {
                 usuario.getDtCriacao(),
                 usuario.getDtUltimoAcesso(),
                 usuario.isFlAtivo(),
+                usuario.getNuFuncionario(),
                 usuario.getPlano()
-
         );
     }
 }
