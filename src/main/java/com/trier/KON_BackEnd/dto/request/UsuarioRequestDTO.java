@@ -18,12 +18,13 @@ public record UsuarioRequestDTO (
                 message = "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial")
         String dsSenha,
 
+        @NotNull(message = "A quantidade de funcionários deve ser informada.")
+        Integer nuFuncionario,
+
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "E-mail inválido")
         @Size(max = 100, message = "O e-mail deve ter no máximo 100 caracteres")
         String dsEmail,
-
-
 
         @NotNull(message = "O status ativo é obrigatório")
         boolean flAtivo,

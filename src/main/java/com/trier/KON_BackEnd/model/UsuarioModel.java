@@ -28,6 +28,12 @@ public class UsuarioModel {
     @Column(unique = true, nullable = false)
     private String dsEmail;
 
+    @Column(nullable = false)
+    private int nuFuncionario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PlanoModel plano;
+
     @CreationTimestamp
     private LocalDateTime dtCriacao;
 
