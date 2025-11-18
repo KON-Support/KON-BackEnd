@@ -2,6 +2,7 @@ package com.trier.KON_BackEnd.services;
 
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
+import com.trier.KON_BackEnd.enums.Status;
 import com.trier.KON_BackEnd.model.CategoriaModel;
 import com.trier.KON_BackEnd.model.ChamadoModel;
 import com.trier.KON_BackEnd.model.SLAModel;
@@ -83,6 +84,36 @@ public class ChamadoService {
         chamado.setUsuario(usuario);
         chamado.setCategoria(categoria);
         chamado.setSla(sla);
+
+        chamadoRepository.save(chamado);
+
+        return new ChamadoResponseDTO(
+
+                chamado.getCdChamado(),
+                chamado.getDsTitulo(),
+                chamado.getDsDescricao(),
+                chamado.getStatus(),
+                chamado.getUsuario(),
+                chamado.getAnexo(),
+                chamado.getCategoria(),
+                chamado.getDtCriacao(),
+                chamado.getHrCriacao(),
+                chamado.getDtFechamento(),
+                chamado.getHrFechamento(),
+                chamado.getDtVencimento(),
+                chamado.getHrVencimento(),
+                chamado.getFlSlaViolado()
+
+        );
+
+    }
+
+    public ChamadoResponseDTO atualizarStatus(Long cdChamado, Status status) {
+
+        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+
+        chamado.setStatus(status);
 
         chamadoRepository.save(chamado);
 
