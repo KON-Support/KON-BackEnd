@@ -2,6 +2,7 @@ package com.trier.KON_BackEnd.controller;
 
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
+import com.trier.KON_BackEnd.enums.Status;
 import com.trier.KON_BackEnd.services.ChamadoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,16 @@ public class ChamadoController {
         return ResponseEntity.status(HttpStatus.OK).body(chamado);
 
     }
+
+    @PutMapping("/fechar/{cdChamado}")
+    public ResponseEntity<ChamadoResponseDTO> fecharChamado(@PathVariable Long cdChamado,
+                                                            Status status) {
+
+        var chamado = chamadoService.fecharChamado(cdChamado, status);
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
 
 }
