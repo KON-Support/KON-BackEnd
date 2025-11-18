@@ -38,6 +38,16 @@ public class ChamadoController {
 
     }
 
+    @PutMapping("/atualizar/status/{cdChamado}")
+    public ResponseEntity<ChamadoResponseDTO> atualizarStatus(@PathVariable Long cdChamado,
+                                                              Status status) {
+
+        var chamado = chamadoService.atualizarStatus(cdChamado, status);
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
     @PutMapping("/fechar/{cdChamado}")
     public ResponseEntity<ChamadoResponseDTO> fecharChamado(@PathVariable Long cdChamado,
                                                             Status status) {
