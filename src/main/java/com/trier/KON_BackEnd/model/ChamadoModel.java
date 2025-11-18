@@ -44,6 +44,10 @@ public class ChamadoModel {
     @JoinColumn(name = "CATEGORIA", referencedColumnName = "CDCATEGORIA")
     private CategoriaModel categoria;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SLA", referencedColumnName = "CDSLA")
+    private SLAModel sla;
+
     @CreatedDate
     @Column(name = "DTCRIACAO")
     private LocalDate dtCriacao;
