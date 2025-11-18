@@ -22,7 +22,7 @@ public record ChamadoRequestDTO(
         Status status,
 
         @NotBlank(message = "É preciso informar o nome da categoria!")
-        CategoriaModel nmCategoria,
+        CategoriaModel categoria,
 
         @NotNull(message = "É preciso informar se o chamado está com o SLA violado ou não!")
         Boolean flSlaViolado

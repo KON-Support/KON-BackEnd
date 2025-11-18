@@ -39,7 +39,7 @@ public class ChamadoService {
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
         chamado.setStatus(chamadoRequest.status());
-        chamado.setCategoria(chamadoRequest.nmCategoria());
+        chamado.setCategoria(chamadoRequest.categoria());
         chamado.setFlSlaViolado(chamadoRequest.flSlaViolado());
 
         chamadoRepository.save(chamado);
