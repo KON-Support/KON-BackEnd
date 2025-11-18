@@ -3,14 +3,8 @@ package com.trier.KON_BackEnd.services;
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
-import com.trier.KON_BackEnd.model.CategoriaModel;
-import com.trier.KON_BackEnd.model.ChamadoModel;
-import com.trier.KON_BackEnd.model.SLAModel;
-import com.trier.KON_BackEnd.model.UsuarioModel;
-import com.trier.KON_BackEnd.repository.CategoriaRepository;
-import com.trier.KON_BackEnd.repository.ChamadoRepository;
-import com.trier.KON_BackEnd.repository.SLARepository;
-import com.trier.KON_BackEnd.repository.UsuarioRepository;
+import com.trier.KON_BackEnd.model.*;
+import com.trier.KON_BackEnd.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +26,9 @@ public class ChamadoService {
 
     @Autowired
     private SLARepository slaRepository;
+
+    @Autowired
+    private AnexoRepository anexoRepository;
 
     @Transactional
     public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) {
@@ -109,6 +106,7 @@ public class ChamadoService {
 
     }
 
+    @Transactional
     public ChamadoResponseDTO atualizarStatus(Long cdChamado, Status status) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
@@ -139,6 +137,7 @@ public class ChamadoService {
 
     }
 
+    @Transactional
     public ChamadoResponseDTO fecharChamado(Long cdChamado, Status status) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
@@ -174,4 +173,67 @@ public class ChamadoService {
         );
 
     }
+
+    @Transactional
+    public ChamadoResponseDTO adicionarComentario(Long cdChamado) {
+
+        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+
+        return new ChamadoResponseDTO(
+
+                chamado.getCdChamado(),
+                chamado.getDsTitulo(),
+                chamado.getDsDescricao(),
+                chamado.getStatus(),
+                chamado.getUsuario(),
+                chamado.getAnexo(),
+                chamado.getCategoria(),
+                chamado.getDtCriacao(),
+                chamado.getHrCriacao(),
+                chamado.getDtFechamento(),
+                chamado.getHrFechamento(),
+                chamado.getDtVencimento(),
+                chamado.getHrVencimento(),
+                chamado.getFlSlaViolado()
+
+        );
+
+    }
+
+    @Transactional
+    public ChamadoResponseDTO adicionarAnexo(Long cdChamado, Long cdAnexo) {
+
+        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+
+        AnexoModel anexo = anexoRepository.findById(cdAnexo)
+                .orElseThrow(() -> new RuntimeException("Anexo não encontrado!"));
+
+        chamado.setAnexo(anexo);
+
+        chamadoRepository.save(chamado);
+
+        return new ChamadoResponseDTO(
+
+                chamado.getCdChamado(),
+                chamado.getDsTitulo(),
+                chamado.getDsDescricao(),
+                chamado.getStatus(),
+                chamado.getUsuario(),
+                chamado.getAnexo(),
+                chamado.getCategoria(),
+                chamado.getDtCriacao(),
+                chamado.getHrCriacao(),
+                chamado.getDtFechamento(),
+                chamado.getHrFechamento(),
+                chamado.getDtVencimento(),
+                chamado.getHrVencimento(),
+                chamado.getFlSlaViolado()
+
+        );
+
+    }
+
+
 }

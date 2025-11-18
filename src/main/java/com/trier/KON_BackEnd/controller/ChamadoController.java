@@ -58,5 +58,15 @@ public class ChamadoController {
 
     }
 
+    @PutMapping("/adicionar/anexo/{cdChamado}")
+    public ResponseEntity<ChamadoResponseDTO> adicionarAnexo(@PathVariable Long cdChamado,
+                                                             Long cdAnexo) {
+
+        var chamado = chamadoService.adicionarAnexo(cdChamado, cdAnexo);
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
 
 }
