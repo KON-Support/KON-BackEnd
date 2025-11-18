@@ -245,7 +245,15 @@ public class ChamadoService {
 
     }
 
+    @Transactional
+    public ChamadoResponseDTO listarChamado(Long cdChamado) {
 
+        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+
+        return convertToResponseDTO(chamado);
+
+    }
 
     private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
         return new ChamadoResponseDTO(

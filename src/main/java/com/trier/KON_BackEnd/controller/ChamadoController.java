@@ -79,6 +79,15 @@ public class ChamadoController {
 
     }
 
+    @GetMapping("/listar/{cdChamado}")
+    public ResponseEntity<ChamadoResponseDTO> listarChamado(@PathVariable Long cdChamado) {
+
+        var chamado = chamadoService.listarChamado(cdChamado);
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
 
 
 
