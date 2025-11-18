@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Service
 public class ChamadoService {
@@ -138,4 +139,39 @@ public class ChamadoService {
 
     }
 
+    public ChamadoResponseDTO fecharChamado(Long cdChamado, Status status) {
+
+        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+
+        if ("FECHADO".equals(chamado.getStatus())) {
+            throw new IllegalStateException("O chamado já está fechado");
+        }
+
+        chamado.setStatus(status);
+        chamado.setDtFechamento(LocalDate.now());
+        chamado.setHrFechamento(LocalTime.now());
+
+        chamadoRepository.save(chamado);
+
+        return new ChamadoResponseDTO(
+
+                chamado.getCdChamado(),
+                chamado.getDsTitulo(),
+                chamado.getDsDescricao(),
+                chamado.getStatus(),
+                chamado.getUsuario(),
+                chamado.getAnexo(),
+                chamado.getCategoria(),
+                chamado.getDtCriacao(),
+                chamado.getHrCriacao(),
+                chamado.getDtFechamento(),
+                chamado.getHrFechamento(),
+                chamado.getDtVencimento(),
+                chamado.getHrVencimento(),
+                chamado.getFlSlaViolado()
+
+        );
+
+    }
 }
