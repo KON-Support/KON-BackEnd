@@ -255,6 +255,15 @@ public class ChamadoService {
 
     }
 
+    @Transactional
+    public List<ChamadoResponseDTO> listarPorStatus(Status status) {
+
+        List<ChamadoModel> chamado = chamadoRepository.findAllByStatus(status);
+
+        return chamado.stream().map(this:: convertToResponseDTO).toList();
+
+    }
+
     private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
         return new ChamadoResponseDTO(
 

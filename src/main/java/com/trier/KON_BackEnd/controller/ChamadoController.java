@@ -88,6 +88,15 @@ public class ChamadoController {
 
     }
 
+    @GetMapping("/listar/status/{status}")
+    public ResponseEntity<List<ChamadoResponseDTO>> listarPorStatus(@PathVariable Status status) {
+
+        var chamado = chamadoService.listarPorStatus(status);
+
+        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+
+    }
+
 
 
 
