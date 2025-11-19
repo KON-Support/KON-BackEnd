@@ -31,7 +31,7 @@ public class UsuarioModel {
     @Column(nullable = false)
     private int nuFuncionario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private PlanoModel plano;
 
     @CreationTimestamp
