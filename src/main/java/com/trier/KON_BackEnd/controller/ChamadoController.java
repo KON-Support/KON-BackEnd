@@ -4,6 +4,13 @@ import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
 import com.trier.KON_BackEnd.services.ChamadoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,15 +20,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/chamado")
-
+@Tag(name = "Chamado", description = "Gerenciamento de chamados (tickets)")
 public class ChamadoController {
 
     @Autowired
     private ChamadoService chamadoService;
 
     @PostMapping("/abrir")
-    public ResponseEntity<ChamadoResponseDTO> abrirChamado(@RequestBody @Valid ChamadoRequestDTO chamadoRequest) {
+    @Operation(summary = "Abrir novo chamado", description = "Cria um novo chamado no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Chamado criado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> abrirChamado(
+            @RequestBody @Valid ChamadoRequestDTO chamadoRequest) {
 
         var chamado = chamadoService.abrirChamado(chamadoRequest);
 
@@ -30,19 +47,49 @@ public class ChamadoController {
     }
 
     @PutMapping("/atribuir/{cdChamado}")
-    public ResponseEntity<ChamadoResponseDTO> atribuirChamado(@PathVariable
-                                                                  Long cdChamado, Long cdUsuario,
-                                                                  Long cdCategoria, Long cdSLA) {
+    @Operation(summary = "Atribuir chamado",
+            description = "Atribui usuário, categoria e SLA a um chamado existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Chamado atribuído com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Chamado, usuário, categoria ou SLA não encontrado",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> atribuirChamado(
+            @Parameter(description = "ID do chamado", required = true)
+            @PathVariable Long cdChamado,
+
+            @Parameter(description = "ID do usuário responsável")
+            @RequestParam(required = false) Long cdUsuario,
+
+            @Parameter(description = "ID da categoria")
+            @RequestParam(required = false) Long cdCategoria,
+
+            @Parameter(description = "ID do SLA")
+            @RequestParam(required = false) Long cdSLA) {
 
         var chamado = chamadoService.atribuirChamado(cdUsuario, cdChamado, cdCategoria, cdSLA);
 
         return ResponseEntity.status(HttpStatus.OK).body(chamado);
-
     }
 
     @PutMapping("/atualizar/status/{cdChamado}")
-    public ResponseEntity<ChamadoResponseDTO> atualizarStatus(@PathVariable Long cdChamado,
-                                                              Status status) {
+    @Operation(summary = "Atualizar status", description = "Atualiza o status de um chamado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Status inválido ou chamado já fechado",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Chamado não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> atualizarStatus(
+            @Parameter(description = "ID do chamado", required = true)
+            @PathVariable Long cdChamado,
+
+            @Parameter(description = "Novo status (ABERTO, EM_ANDAMENTO, RESOLVIDO, FECHADO)", required = true)
+            @RequestParam Status status) {
 
         var chamado = chamadoService.atualizarStatus(cdChamado, status);
 
@@ -51,8 +98,21 @@ public class ChamadoController {
     }
 
     @PutMapping("/fechar/{cdChamado}")
-    public ResponseEntity<ChamadoResponseDTO> fecharChamado(@PathVariable Long cdChamado,
-                                                            Status status) {
+    @Operation(summary = "Fechar chamado",
+            description = "Fecha um chamado e registra data/hora de fechamento")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Chamado fechado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Chamado já está fechado", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Chamado não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> fecharChamado(
+            @Parameter(description = "ID do chamado", required = true)
+            @PathVariable Long cdChamado,
+
+            @Parameter(description = "Status de fechamento (RESOLVIDO ou FECHADO)", required = true)
+            @RequestParam Status status) {
 
         var chamado = chamadoService.fecharChamado(cdChamado, status);
 
@@ -61,8 +121,20 @@ public class ChamadoController {
     }
 
     @PutMapping("/adicionar/anexo/{cdChamado}")
-    public ResponseEntity<ChamadoResponseDTO> adicionarAnexo(@PathVariable Long cdChamado,
-                                                             @RequestBody Long cdAnexo) {
+    @Operation(summary = "Adicionar anexo",
+            description = "Adiciona um anexo existente a um chamado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Anexo adicionado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Chamado ou anexo não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> adicionarAnexo(
+            @Parameter(description = "ID do chamado", required = true)
+            @PathVariable Long cdChamado,
+
+            @Parameter(description = "ID do anexo", required = true)
+            @RequestBody Long cdAnexo) {
 
         var chamado = chamadoService.adicionarAnexo(cdChamado, cdAnexo);
 
@@ -71,16 +143,33 @@ public class ChamadoController {
     }
 
     @GetMapping("/listar/todos")
+    @Operation(summary = "Listar todos os chamados",
+            description = "Retorna todos os chamados cadastrados no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de chamados retornada com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
     public ResponseEntity<List<ChamadoResponseDTO>> listarTodosChamados() {
 
-        var chamado = chamadoService.listarTodosChamados();
+        var chamados = chamadoService.listarTodosChamados();
 
-        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+        return ResponseEntity.status(HttpStatus.OK).body(chamados);
 
     }
 
     @GetMapping("/listar/{cdChamado}")
-    public ResponseEntity<ChamadoResponseDTO> listarChamado(@PathVariable Long cdChamado) {
+    @Operation(summary = "Buscar chamado por ID",
+            description = "Retorna os dados de um chamado específico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Chamado encontrado",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Chamado não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<ChamadoResponseDTO> listarChamado(
+            @Parameter(description = "ID do chamado", required = true)
+            @PathVariable Long cdChamado) {
 
         var chamado = chamadoService.listarChamado(cdChamado);
 
@@ -89,15 +178,22 @@ public class ChamadoController {
     }
 
     @GetMapping("/listar/status/{status}")
-    public ResponseEntity<List<ChamadoResponseDTO>> listarPorStatus(@PathVariable Status status) {
+    @Operation(summary = "Listar chamados por status",
+            description = "Retorna todos os chamados com um status específico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de chamados retornada com sucesso",
+                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<List<ChamadoResponseDTO>> listarPorStatus(
+            @Parameter(description = "Status do chamado (ABERTO, EM_ANDAMENTO, RESOLVIDO, FECHADO)",
+                    required = true)
+            @PathVariable Status status) {
 
-        var chamado = chamadoService.listarPorStatus(status);
+        var chamados = chamadoService.listarPorStatus(status);
 
-        return ResponseEntity.status(HttpStatus.OK).body(chamado);
+        return ResponseEntity.status(HttpStatus.OK).body(chamados);
 
     }
-
-
-
 
 }
