@@ -218,14 +218,48 @@ public class ChamadoService {
     }
 
     private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
+
+        ChamadoResponseDTO.UsuarioSimplesDTO usuarioDTO = null;
+        if (chamado.getUsuario() != null) {
+            usuarioDTO = new ChamadoResponseDTO.UsuarioSimplesDTO(
+                    chamado.getUsuario().getCdUsuario(),
+                    chamado.getUsuario().getNmUsuario()
+            );
+        }
+        ChamadoResponseDTO.AnexoSimplesDTO anexoDTO = null;
+        if (chamado.getAnexo() != null) {
+            anexoDTO = new ChamadoResponseDTO.AnexoSimplesDTO(
+                    chamado.getAnexo().getCdAnexo(),
+                    chamado.getAnexo().getNmArquivo(),
+                    chamado.getAnexo().getDsTipoArquivo()
+            );
+        }
+        ChamadoResponseDTO.CategoriaSimplesDTO categoriaDTO = null;
+        if (chamado.getCategoria() != null) {
+            categoriaDTO = new ChamadoResponseDTO.CategoriaSimplesDTO(
+                    chamado.getCategoria().getCdCategoria(),
+                    chamado.getCategoria().getNmCategoria()
+            );
+        }
+        ChamadoResponseDTO.SLASimplesDTO slaDTO = null;
+        if (chamado.getSla() != null) {
+            slaDTO = new ChamadoResponseDTO.SLASimplesDTO(
+                    chamado.getSla().getCdSLA(),
+                    chamado.getSla().getQtHorasResposta(),
+                    chamado.getSla().getQtHorasResolucao()
+            );
+        }
+
         return new ChamadoResponseDTO(
+
                 chamado.getCdChamado(),
                 chamado.getDsTitulo(),
                 chamado.getDsDescricao(),
                 chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
+                usuarioDTO,
+                anexoDTO,
+                categoriaDTO,
+                slaDTO,
                 chamado.getDtCriacao(),
                 chamado.getHrCriacao(),
                 chamado.getDtFechamento(),
@@ -233,6 +267,7 @@ public class ChamadoService {
                 chamado.getDtVencimento(),
                 chamado.getHrVencimento(),
                 chamado.getFlSlaViolado()
+
         );
     }
 }
