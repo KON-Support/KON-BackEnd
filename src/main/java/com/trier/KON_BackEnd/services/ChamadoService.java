@@ -59,21 +59,28 @@ public class ChamadoService {
     }
 
     @Transactional
-    public ChamadoResponseDTO atribuirChamado(Long cdChamado, Long responsavel, Long cdCategoria, Long cdSLA) {
+    public ChamadoResponseDTO atribuirChamado(Long cdChamado, Long cdResponsavel, Long cdCategoria, Long cdSLA) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
                 .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
 
-        if (responsavel != null) {
-            UsuarioModel cdResponsavel = usuarioRepository.findById(responsavel)
-                    .orElseThrow(() -> new UsuarioNaoEncontradoException(responsavel));
-            chamado.setResponsavel(cdResponsavel);
+        // Atribui o RESPONSÁVEL (atendente)
+        if (cdResponsavel != null) {
+            UsuarioModel responsavel = usuarioRepository.findById(cdResponsavel)
+                    .orElseThrow(() -> new UsuarioNaoEncontradoException(cdResponsavel));
+            chamado.setResponsavel(responsavel);
+
+            // IMPORTANTE: Force o carregamento do nome do usuário
+            responsavel.getNmUsuario();
         }
 
         if (cdCategoria != null) {
             CategoriaModel categoria = categoriaRepository.findById(cdCategoria)
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
             chamado.setCategoria(categoria);
+
+            // Force o carregamento
+            categoria.getNmCategoria();
         }
 
         if (cdSLA != null) {
@@ -81,6 +88,15 @@ public class ChamadoService {
                     .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
             chamado.setSla(sla);
 
+            // Force o carregamento das relações do SLA
+            if (sla.getCategoria() != null) {
+                sla.getCategoria().getNmCategoria();
+            }
+            if (sla.getUsuario() != null) {
+                sla.getUsuario().getNmUsuario();
+            }
+
+            // Calcula vencimento
             if (sla.getQtHorasResolucao() != null && chamado.getDtCriacao() != null) {
                 LocalTime hrVencimento = chamado.getHrCriacao().plusHours(sla.getQtHorasResolucao());
                 LocalDate dtVencimento = chamado.getDtCriacao();
@@ -94,9 +110,16 @@ public class ChamadoService {
             }
         }
 
+        // Salva as alterações
         chamadoRepository.save(chamado);
 
-        return convertToResponseDTO(chamado);
+        // Limpa o contexto e busca novamente com todas as relações
+        chamadoRepository.flush();
+
+        ChamadoModel chamadoCompleto = chamadoRepository.findByIdWithRelations(cdChamado)
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
+
+        return convertToResponseDTO(chamadoCompleto);
 
     }
 
