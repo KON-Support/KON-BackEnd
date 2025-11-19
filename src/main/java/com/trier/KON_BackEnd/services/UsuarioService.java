@@ -64,10 +64,13 @@ public class UsuarioService {
         usuario.setRoleModel(roles);
         usuario.setNuFuncionario(dto.nuFuncionario());
 
-        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosDesc();
+        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosAsc();
 
         for (PlanoModel plano : planos) {
-            if (usuario.getNuFuncionario() >= plano.getLimiteUsuarios()) {
+            if(plano.getLimiteUsuarios() == null) {
+                usuario.setPlano(plano);
+                break;
+            } else if (usuario.getNuFuncionario() <= plano.getLimiteUsuarios()) {
                 usuario.setPlano(plano);
                 break;
             }
