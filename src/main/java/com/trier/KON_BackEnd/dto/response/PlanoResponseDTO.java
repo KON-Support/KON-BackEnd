@@ -8,6 +8,10 @@ public record PlanoResponseDTO(
 
         Double vlPlano,
 
-        Integer limiteUsuarios
+        Integer limiteUsuarios,
+
+        Integer hrRespostaPlano,
+
+        Integer hrResolucaoPlano
 ) {
 }

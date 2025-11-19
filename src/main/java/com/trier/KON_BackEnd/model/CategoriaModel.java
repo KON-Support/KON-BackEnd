@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "TBCATEGORIA")
 @NoArgsConstructor
@@ -21,6 +23,12 @@ public class CategoriaModel {
 
     @Column(name = "NMCATEGORIA")
     private String nmCategoria;
+
+    @Column(name = "HRRESPOSTA")
+    private Integer hrResposta;
+
+    @Column(name = "HRRESOLUCAO")
+    private Integer hrResolucao;
 
     @Column(name = "FLATIVO")
     private Boolean flAtivo;
