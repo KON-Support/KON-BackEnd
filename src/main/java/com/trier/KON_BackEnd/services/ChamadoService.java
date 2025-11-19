@@ -50,14 +50,14 @@ public class ChamadoService {
         chamado.setHrCriacao(LocalTime.now());
 
         // Se foi informado usuário no request (verificar com equipe)...
-        if (chamadoRequest.cdUsuario() != null) {
+        /* if (chamadoRequest.cdUsuario() != null) {
             UsuarioModel usuario = usuarioRepository.findById(chamadoRequest.cdUsuario())
                     .orElseThrow(() -> new UsuarioNaoEncontradoException(chamadoRequest.cdUsuario()));
             chamado.setUsuario(usuario);
-        }
+        } */
 
         // Se foi informado SLA no request (verificar com equipe)...
-        if (chamadoRequest.cdSLA() != null) {
+        /* if (chamadoRequest.cdSLA() != null) {
             SLAModel sla = slaRepository.findById(chamadoRequest.cdSLA())
                     .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
             chamado.setSla(sla);
@@ -75,7 +75,7 @@ public class ChamadoService {
                 chamado.setDtVencimento(dtVencimento);
                 chamado.setHrVencimento(hrVencimento);
             }
-        }
+        } */
 
         chamadoRepository.save(chamado);
         return convertToResponseDTO(chamado);
