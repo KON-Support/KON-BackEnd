@@ -39,7 +39,7 @@ public class SLAController {
                                                        @Valid @RequestBody SLARequestDto slaResquest) {
 
         try {
-            SLAResponseDto atualizado = slaService.autalizarSLA(slaResquest, cdSLA);
+            SLAResponseDto atualizado = slaService.atualizarSLA(slaResquest, cdSLA);
             System.out.println("SLA atualizado");
             return ResponseEntity.ok(atualizado);
         } catch (Exception e) {

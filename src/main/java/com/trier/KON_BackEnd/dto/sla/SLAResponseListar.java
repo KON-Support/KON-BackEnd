@@ -6,7 +6,7 @@ import com.trier.KON_BackEnd.model.UsuarioModel;
 public record SLAResponseListar(
         Long cdSLA,
         String categoria,
-        String usuario,
+        String plano,
         Integer qtHorasResposta,
         Integer qtHorasResolucao
 ) {

@@ -24,8 +24,8 @@ public class SLAModel {
 
     @JsonManagedReference
     @ManyToOne
-    @JoinColumn(name = "cdUsuario")
-    private UsuarioModel usuario;
+    @JoinColumn(name = "cdPlano")
+    private PlanoModel plano;
 
     @JsonManagedReference
     @ManyToOne

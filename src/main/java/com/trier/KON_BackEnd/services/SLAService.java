@@ -6,9 +6,11 @@ import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.exception.SLANaoEncontradoException;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.CategoriaModel;
+import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.SLAModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
 import com.trier.KON_BackEnd.repository.CategoriaRepository;
+import com.trier.KON_BackEnd.repository.PlanoRepository;
 import com.trier.KON_BackEnd.repository.SLARepository;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
@@ -27,7 +29,7 @@ public class SLAService {
 
     private final SLARepository slaRepository;
     private final CategoriaRepository catRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final PlanoRepository planoRepository;
 
     @Transactional
     public SLAResponseDto criasSLA(SLARequestDto slaRequestDto) {
@@ -35,12 +37,12 @@ public class SLAService {
         CategoriaModel cat = catRepository.findById(slaRequestDto.cdCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        UsuarioModel usuario = usuarioRepository.findById(slaRequestDto.cdUsuario())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(slaRequestDto.cdUsuario()));
+        PlanoModel plano = planoRepository.findById(slaRequestDto.cdPlano())
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
         SLAModel sla = new SLAModel();
         sla.setCategoria(cat);
-        sla.setUsuario(usuario);
+        sla.setPlano(plano);
         sla.setQtHorasResposta(slaRequestDto.qtHorasResposta());
         sla.setQtHorasResolucao(slaRequestDto.qtHorasResolucao());
 
@@ -48,26 +50,26 @@ public class SLAService {
 
         return new SLAResponseDto(
                 salvo.getCdSLA(),
-                salvo.getCategoria().getCdCategoria(),
-                salvo.getUsuario().getCdUsuario(),
+                salvo.getCategoria().getNmCategoria(),
+                salvo.getPlano().getNmPlano(),
                 salvo.getQtHorasResposta(),
                 salvo.getQtHorasResolucao()
         );
     }
 
     @Transactional
-    public SLAResponseDto autalizarSLA(SLARequestDto requestDto, Long cdSLA) {
+    public SLAResponseDto atualizarSLA(SLARequestDto requestDto, Long cdSLA) {
         SLAModel sla = slaRepository.findByCdSLA(cdSLA)
                 .orElseThrow(() -> new SLANaoEncontradoException("SLA não encontrado: " + cdSLA));
 
         CategoriaModel cat = catRepository.findById(requestDto.cdCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        UsuarioModel usuario = usuarioRepository.findById(requestDto.cdUsuario())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(requestDto.cdUsuario()));
+        PlanoModel plano = planoRepository.findById(requestDto.cdPlano())
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
         sla.setCategoria(cat);
-        sla.setUsuario(usuario);
+        sla.setPlano(plano);
         sla.setQtHorasResposta(requestDto.qtHorasResposta());
         sla.setQtHorasResolucao(requestDto.qtHorasResolucao());
 
@@ -75,8 +77,8 @@ public class SLAService {
 
         return new SLAResponseDto(
                 atualizado.getCdSLA(),
-                atualizado.getCategoria().getCdCategoria(),
-                atualizado.getUsuario().getCdUsuario(),
+                atualizado.getCategoria().getNmCategoria(),
+                atualizado.getPlano().getNmPlano(),
                 atualizado.getQtHorasResposta(),
                 atualizado.getQtHorasResolucao()
         );
@@ -89,7 +91,7 @@ public class SLAService {
                 .map(sla -> new SLAResponseListar(
                         sla.getCdSLA(),
                         sla.getCategoria().getNmCategoria(),
-                        sla.getUsuario().getNmUsuario(),
+                        sla.getPlano().getNmPlano(),
                         sla.getQtHorasResposta(),
                         sla.getQtHorasResolucao()
                 ))
@@ -109,7 +111,7 @@ public class SLAService {
                 .map(slas -> new SLAResponseListar(
                         slas.getCdSLA(),
                         slas.getCategoria().getNmCategoria(),
-                        slas.getUsuario().getNmUsuario(),
+                        slas.getPlano().getNmPlano(),
                         slas.getQtHorasResposta(),
                         slas.getQtHorasResolucao()
                 ))
