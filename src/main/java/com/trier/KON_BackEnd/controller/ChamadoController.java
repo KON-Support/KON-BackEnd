@@ -1,5 +1,6 @@
 package com.trier.KON_BackEnd.controller;
 
+import com.trier.KON_BackEnd.dto.request.AtribuirChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
@@ -60,16 +61,15 @@ public class ChamadoController {
             @Parameter(description = "ID do chamado", required = true)
             @PathVariable Long cdChamado,
 
-            @Parameter(description = "ID do responsável (atendente)")
-            @RequestParam(required = false) Long cdResponsavel,
+            @RequestBody AtribuirChamadoRequestDTO request) {
 
-            @Parameter(description = "ID da categoria")
-            @RequestParam(required = false) Long cdCategoria,
+        var chamado = chamadoService.atribuirChamado(
+                cdChamado,
+                request.cdResponsavel(),
+                request.cdCategoria(),
+                request.cdSLA()
+        );
 
-            @Parameter(description = "ID do SLA")
-            @RequestParam(required = false) Long cdSLA) {
-
-        var chamado = chamadoService.atribuirChamado(cdChamado, cdResponsavel, cdCategoria, cdSLA);
         return ResponseEntity.status(HttpStatus.OK).body(chamado);
     }
 
