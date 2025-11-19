@@ -12,7 +12,6 @@ public record PlanoRequestDTO(
         @NotNull(message = "É necessario informar o valor do Plano!")
         Double vlPlano,
 
-        @NotNull(message = "É necessario informar o limite de usuarios do Plano!")
         Integer limiteUsuarios
 
 ) {
