@@ -6,18 +6,18 @@ import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.exception.SLANaoEncontradoException;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.CategoriaModel;
+import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.SLAModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
 import com.trier.KON_BackEnd.repository.CategoriaRepository;
+import com.trier.KON_BackEnd.repository.PlanoRepository;
 import com.trier.KON_BackEnd.repository.SLARepository;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +28,7 @@ public class SLAService {
     private final SLARepository slaRepository;
     private final CategoriaRepository catRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PlanoRepository planoRepository;
 
     @Transactional
     public SLAResponseDto criasSLA(SLARequestDto slaRequestDto) {
@@ -38,11 +39,18 @@ public class SLAService {
         UsuarioModel usuario = usuarioRepository.findById(slaRequestDto.cdUsuario())
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(slaRequestDto.cdUsuario()));
 
+        PlanoModel plano = planoRepository.findById(slaRequestDto.cdPlano())
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
+
         SLAModel sla = new SLAModel();
         sla.setCategoria(cat);
         sla.setUsuario(usuario);
-        sla.setQtHorasResposta(slaRequestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(slaRequestDto.qtHorasResolucao());
+
+        long hrsResposta = cat.getHoraCategoria() * plano.getMultiplicador();
+        sla.setQtHorasResposta(LocalDateTime.now().plusHours(hrsResposta));
+
+        long hrsResolucao = cat.getHoraCategoria() * plano.getMultiplicador() + 24;
+        sla.setQtHorasResolucao(LocalDateTime.now().plusHours(hrsResolucao));
 
         SLAModel salvo = slaRepository.save(sla);
 
@@ -68,8 +76,10 @@ public class SLAService {
 
         sla.setCategoria(cat);
         sla.setUsuario(usuario);
-        sla.setQtHorasResposta(requestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(requestDto.qtHorasResolucao());
+
+        long hrsResposta = cat.getHoraCategoria();
+        sla.setQtHorasResposta(LocalDateTime.now().plusHours(hrsResposta));
+        sla.setQtHorasResolucao(LocalDateTime.now().plusHours(hrsResposta));
 
         SLAModel atualizado = slaRepository.save(sla);
 

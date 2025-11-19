@@ -25,6 +25,7 @@ public class PlanoService {
         plano.setNmPlano(dto.nmPlano());
         plano.setVlPlano(dto.vlPlano());
         plano.setLimiteUsuarios(dto.limiteUsuarios());
+        plano.setMultiplicador(dto.multiplicador());
 
 
          planoRepository.save(plano);
@@ -33,7 +34,8 @@ public class PlanoService {
                  plano.getCdPlano(),
                  plano.getNmPlano(),
                  plano.getVlPlano(),
-                 plano.getLimiteUsuarios()
+                 plano.getLimiteUsuarios(),
+                 plano.getMultiplicador()
          );
 
     }
@@ -48,7 +50,8 @@ public class PlanoService {
                 plano.getCdPlano(),
                 plano.getNmPlano(),
                 plano.getVlPlano(),
-                plano.getLimiteUsuarios()
+                plano.getLimiteUsuarios(),
+                plano.getMultiplicador()
 
         );
 

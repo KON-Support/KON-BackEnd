@@ -22,10 +22,7 @@ public record SLARequestDto(
         @Schema(description = "Usuário do sla", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
         Long cdUsuario,
 
-        @Schema(description = "Data de resposta", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-        Integer qtHorasResposta,
-
-        @Schema(description = "Data de resolução", example = "3", requiredMode = Schema.RequiredMode.REQUIRED)
-        Integer qtHorasResolucao
+        @NotNull(message = "O id do plano é obrigatório")
+        Long cdPlano
 ) {
 }

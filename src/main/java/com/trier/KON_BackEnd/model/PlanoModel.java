@@ -23,6 +23,8 @@ public class PlanoModel {
     @Column(nullable = false)
     private Double vlPlano;
 
+    private Integer multiplicador;
+
     @Column(nullable = false)
     private Integer limiteUsuarios;
 }

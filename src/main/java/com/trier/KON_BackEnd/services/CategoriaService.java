@@ -23,6 +23,7 @@ public class CategoriaService {
 
         categoria.setNmCategoria(categoriaRequest.nmCategoria());
         categoria.setFlAtivo(categoriaRequest.flAtivo());
+        categoria.setHoraCategoria(categoriaRequest.hrCategoria());
 
         categoriaRepository.save(categoria);
 
@@ -30,7 +31,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
-                categoria.getFlAtivo()
+                categoria.getFlAtivo(),
+                categoria.getHoraCategoria()
 
         );
 
@@ -50,7 +52,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
-                categoria.getFlAtivo()
+                categoria.getFlAtivo(),
+                categoria.getHoraCategoria()
 
         );
 
@@ -70,7 +73,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
-                categoria.getFlAtivo()
+                categoria.getFlAtivo(),
+                categoria.getHoraCategoria()
 
         );
 
@@ -90,7 +94,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
-                categoria.getFlAtivo()
+                categoria.getFlAtivo(),
+                categoria.getHoraCategoria()
 
         );
 
@@ -130,7 +135,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
-                categoria.getFlAtivo()
+                categoria.getFlAtivo(),
+                categoria.getHoraCategoria()
 
         );
 

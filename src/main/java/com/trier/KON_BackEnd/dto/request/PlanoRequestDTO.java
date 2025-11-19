@@ -13,7 +13,10 @@ public record PlanoRequestDTO(
         Double vlPlano,
 
         @NotNull(message = "É necessario informar o limite de usuarios do Plano!")
-        Integer limiteUsuarios
+        Integer limiteUsuarios,
+
+        @NotNull(message = "É necessario informar o multiplicador do plano para o SLA")
+        Integer multiplicador
 
 ) {
 }

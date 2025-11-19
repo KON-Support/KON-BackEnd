@@ -4,7 +4,8 @@ public record CategoriaResponseDTO(
 
         Long cdCategoria,
         String nmCategoria,
-        Boolean flAtivo
+        Boolean flAtivo,
+        Integer hrCategoria
 
 ) {
 }

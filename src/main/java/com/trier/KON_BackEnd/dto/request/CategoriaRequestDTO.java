@@ -10,6 +10,9 @@ public record CategoriaRequestDTO(
         @Size(max = 255, message= "O máximo de caracateres que pode ter é 255!")
         String nmCategoria,
 
+        @NotNull(message = "É preciso informar quantas horas a categoria deve ser respondida")
+        Integer hrCategoria,
+
         @NotNull(message = "É preciso informar se a categoria está ativa!")
         Boolean flAtivo
 

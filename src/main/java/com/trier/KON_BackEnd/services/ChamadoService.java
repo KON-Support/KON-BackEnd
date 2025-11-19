@@ -82,11 +82,11 @@ public class ChamadoService {
             chamado.setSla(sla);
 
             if (sla.getQtHorasResolucao() != null && chamado.getDtCriacao() != null) {
-                LocalTime hrVencimento = chamado.getHrCriacao().plusHours(sla.getQtHorasResolucao());
+                LocalTime hrVencimento = chamado.getHrCriacao().plusHours(1);
                 LocalDate dtVencimento = chamado.getDtCriacao();
 
                 if (hrVencimento.isBefore(chamado.getHrCriacao())) {
-                    dtVencimento = dtVencimento.plusDays(sla.getQtHorasResolucao() / 24);
+                    dtVencimento = dtVencimento.plusDays(1);
                 }
 
                 chamado.setDtVencimento(dtVencimento);
@@ -230,8 +230,8 @@ public class ChamadoService {
         if (chamado.getSla() != null) {
             slaDTO = new ChamadoResponseDTO.SLASimplesDTO(
                     chamado.getSla().getCdSLA(),
-                    chamado.getSla().getQtHorasResposta(),
-                    chamado.getSla().getQtHorasResolucao()
+                    chamado.getSla().getQtHorasResposta().getHour(),
+                    chamado.getSla().getQtHorasResolucao().getHour()
             );
         }
 
