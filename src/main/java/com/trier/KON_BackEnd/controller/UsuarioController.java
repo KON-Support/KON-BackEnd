@@ -31,13 +31,13 @@ public class UsuarioController {
 
     }
 
-    @DeleteMapping("/desativar/{cdUsuario}")
+    @PatchMapping("/desativar/{cdUsuario}")
     public ResponseEntity<UsuarioResponseDTO> desativar(@PathVariable Long cdUsuario) {
         var desativar = service.desativar(cdUsuario);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(desativar);
     }
 
-    @PutMapping("/reativar/{cdUsuario}")
+    @PatchMapping("/reativar/{cdUsuario}")
     public ResponseEntity<UsuarioResponseDTO> reativar(@PathVariable @Valid Long cdUsuario) {
         var reativar = service.reativar(cdUsuario);
         return ResponseEntity.status(HttpStatus.OK).body(reativar);
