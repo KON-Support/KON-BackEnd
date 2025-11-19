@@ -1,6 +1,7 @@
 package com.trier.KON_BackEnd.controller;
 
 import com.trier.KON_BackEnd.dto.request.CategoriaRequestDTO;
+import com.trier.KON_BackEnd.dto.request.CategoriaUpdateRequestDTO;
 import com.trier.KON_BackEnd.dto.response.CategoriaResponseDTO;
 import com.trier.KON_BackEnd.services.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,7 +55,7 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponseDTO> atualizarCategoria(
             @Parameter(description = "ID da categoria a ser atualizada", required = true)
             @PathVariable Long cdCategoria,
-            @RequestBody @Valid CategoriaRequestDTO categoriaRequest) {
+            @RequestBody @Valid CategoriaUpdateRequestDTO categoriaRequest) {
 
         var categoria = categoriaService.atualizarCategoria(cdCategoria, categoriaRequest);
 
