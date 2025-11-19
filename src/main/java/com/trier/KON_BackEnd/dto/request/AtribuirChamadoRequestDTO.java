@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record AtribuirChamadoRequestDTO(
 
         @Schema(description = "Código do responsável (atendente)", example = "1")
-        Long cdResponsavel,
+        Long responsavel,
 
         @Schema(description = "Código da categoria", example = "1")
         Long cdCategoria,

@@ -65,7 +65,7 @@ public class ChamadoController {
 
         var chamado = chamadoService.atribuirChamado(
                 cdChamado,
-                request.cdResponsavel(),
+                request.responsavel(),
                 request.cdCategoria(),
                 request.cdSLA()
         );
