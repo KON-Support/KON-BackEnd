@@ -20,7 +20,7 @@ public class SLAModel {
 
     private Integer qtHorasResolucao;
 
-    private booleaFix flAtivo = true;
+    private boolean flAtivo = true;
 
     @JsonManagedReference
     @ManyToOne
