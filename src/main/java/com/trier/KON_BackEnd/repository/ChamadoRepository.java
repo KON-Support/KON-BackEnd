@@ -15,12 +15,13 @@ public interface ChamadoRepository extends JpaRepository<ChamadoModel, Long> {
 
     List<ChamadoModel> findAllByStatus(Status status);
 
-    @Query("SELECT c FROM ChamadoModel c " +
-            "LEFT JOIN FETCH c.usuario " +
+    /* @Query("SELECT c FROM ChamadoModel c " +
+            "LEFT JOIN FETCH c.solicitante " +
+            "LEFT JOIN FETCH c.responsavel" +
             "LEFT JOIN FETCH c.anexo " +
             "LEFT JOIN FETCH c.categoria " +
             "LEFT JOIN FETCH c.sla " +
             "WHERE c.cdChamado = :cdChamado")
-    Optional<ChamadoModel> findByIdWithRelations(@Param("cdChamado") Long cdChamado);
+    Optional<ChamadoModel> findByIdWithRelations(@Param("cdChamado") Long cdChamado); */
 
 }

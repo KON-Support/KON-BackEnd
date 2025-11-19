@@ -19,13 +19,10 @@ public record ChamadoRequestDTO(
         Status status,
 
         @NotNull(message = "É preciso informar o código da categoria!")
-        Long cdCategoria
+        Long cdCategoria,
 
-        // Opcional - pode ser atribuído depois (verificar com equipe)...
-        // Long cdUsuario,
-
-        // Opcional - pode ser atribuído depois (verificar com equipe)...
-        // Long cdSLA
+        @NotNull(message = "É preciso informar o código do solicitante(cliente)!")
+        Long solicitante
 
 ) {
 }

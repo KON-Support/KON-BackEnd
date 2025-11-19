@@ -48,11 +48,11 @@ public class ChamadoController {
 
     @PutMapping("/atribuir/{cdChamado}")
     @Operation(summary = "Atribuir chamado",
-            description = "Atribui usuário, categoria e SLA a um chamado existente")
+            description = "Atribui responsável (atendente), categoria e SLA a um chamado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Chamado atribuído com sucesso",
                     content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Chamado, usuário, categoria ou SLA não encontrado",
+            @ApiResponse(responseCode = "404", description = "Chamado, responsável, categoria ou SLA não encontrado",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
@@ -60,8 +60,8 @@ public class ChamadoController {
             @Parameter(description = "ID do chamado", required = true)
             @PathVariable Long cdChamado,
 
-            @Parameter(description = "ID do usuário responsável")
-            @RequestParam(required = false) Long cdUsuario,
+            @Parameter(description = "ID do responsável (atendente)")
+            @RequestParam(required = false) Long cdResponsavel,
 
             @Parameter(description = "ID da categoria")
             @RequestParam(required = false) Long cdCategoria,
@@ -69,8 +69,7 @@ public class ChamadoController {
             @Parameter(description = "ID do SLA")
             @RequestParam(required = false) Long cdSLA) {
 
-        var chamado = chamadoService.atribuirChamado(cdUsuario, cdChamado, cdCategoria, cdSLA);
-
+        var chamado = chamadoService.atribuirChamado(cdChamado, cdResponsavel, cdCategoria, cdSLA);
         return ResponseEntity.status(HttpStatus.OK).body(chamado);
     }
 

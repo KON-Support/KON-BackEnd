@@ -31,8 +31,12 @@ public class ChamadoModel {
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USUARIO", referencedColumnName = "CDUSUARIO")
-    private UsuarioModel usuario;
+    @JoinColumn(name = "SOLICITANTE", referencedColumnName = "CDUSUARIO")
+    private UsuarioModel solicitante;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RESPONSAVEL", referencedColumnName = "CDUSUARIO")
+    private UsuarioModel responsavel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ANEXO", referencedColumnName = "CDANEXO")
