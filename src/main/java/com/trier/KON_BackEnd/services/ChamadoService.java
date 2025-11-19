@@ -104,6 +104,9 @@ public class ChamadoService {
                     .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
             chamado.setSla(sla);
 
+            sla.getCategoria().getNmCategoria();
+            sla.getUsuario().getNmUsuario();
+
             if (sla.getQtHorasResolucao() != null && chamado.getDtCriacao() != null) {
                 LocalTime hrVencimento = chamado.getHrCriacao().plusHours(sla.getQtHorasResolucao());
                 LocalDate dtVencimento = chamado.getDtCriacao();
@@ -120,7 +123,10 @@ public class ChamadoService {
 
         chamadoRepository.save(chamado);
 
-        return convertToResponseDTO(chamado);
+        ChamadoModel chamadoCompleto = chamadoRepository.findByIdWithRelations(cdChamado)
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
+
+        return convertToResponseDTO(chamadoCompleto);
 
     }
 
