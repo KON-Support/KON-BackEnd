@@ -77,7 +77,7 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(categoria);
     }
 
-    @PutMapping("/reativar/{cdCategoria}")
+    @PatchMapping("/reativar/{cdCategoria}")
     @Operation(summary = "Reativar categoria", description = "Reativa uma categoria previamente desativada")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categoria reativada com sucesso",
