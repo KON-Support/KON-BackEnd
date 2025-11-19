@@ -3,6 +3,8 @@ package com.trier.KON_BackEnd.services;
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
+import com.trier.KON_BackEnd.exception.ChamadoNaoEncontradoException;
+import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.*;
 import com.trier.KON_BackEnd.repository.*;
 import jakarta.transaction.Transactional;
@@ -34,76 +36,91 @@ public class ChamadoService {
     @Transactional
     public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) {
 
-        ChamadoModel chamado = new ChamadoModel();
+        CategoriaModel categoria = categoriaRepository.findById(chamadoRequest.cdCategoria())
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
 
+        ChamadoModel chamado = new ChamadoModel();
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
         chamado.setStatus(chamadoRequest.status());
-        chamado.setCategoria(chamadoRequest.categoria());
-        chamado.setFlSlaViolado(chamadoRequest.flSlaViolado());
+        chamado.setCategoria(categoria);
+        chamado.setFlSlaViolado(false);
+
+        chamado.setDtCriacao(LocalDate.now());
+        chamado.setHrCriacao(LocalTime.now());
+
+        // Se foi informado usuário no request (verificar com equipe)...
+        if (chamadoRequest.cdUsuario() != null) {
+            UsuarioModel usuario = usuarioRepository.findById(chamadoRequest.cdUsuario())
+                    .orElseThrow(() -> new UsuarioNaoEncontradoException(chamadoRequest.cdUsuario()));
+            chamado.setUsuario(usuario);
+        }
+
+        // Se foi informado SLA no request (verificar com equipe)...
+        if (chamadoRequest.cdSLA() != null) {
+            SLAModel sla = slaRepository.findById(chamadoRequest.cdSLA())
+                    .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
+            chamado.setSla(sla);
+
+            // Calcula data/hora de vencimento baseado no SLA (verificar com equipe)...
+            if (sla.getQtHorasResolucao() != null) {
+                LocalTime hrVencimento = chamado.getHrCriacao().plusHours(sla.getQtHorasResolucao());
+                LocalDate dtVencimento = chamado.getDtCriacao();
+
+                // Se passar de 24h, ajusta o dia (verificar com equipe)...
+                if (hrVencimento.isBefore(chamado.getHrCriacao())) {
+                    dtVencimento = dtVencimento.plusDays(sla.getQtHorasResolucao() / 24);
+                }
+
+                chamado.setDtVencimento(dtVencimento);
+                chamado.setHrVencimento(hrVencimento);
+            }
+        }
 
         chamadoRepository.save(chamado);
-
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
-
+        return convertToResponseDTO(chamado);
     }
 
     @Transactional
     public ChamadoResponseDTO atribuirChamado(Long cdUsuario, Long cdChamado, Long cdCategoria, Long cdSLA) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
 
-        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+        if (cdUsuario != null) {
+            UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                    .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
+            chamado.setUsuario(usuario);
+        }
 
-        CategoriaModel categoria = categoriaRepository.findById(cdCategoria)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
+        if (cdCategoria != null) {
+            CategoriaModel categoria = categoriaRepository.findById(cdCategoria)
+                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
+            chamado.setCategoria(categoria);
+        }
 
-        SLAModel sla = slaRepository.findById(cdSLA)
-                .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
+        if (cdSLA != null) {
+            SLAModel sla = slaRepository.findById(cdSLA)
+                    .orElseThrow(() -> new RuntimeException("SLA não encontrado!"));
+            chamado.setSla(sla);
 
-        chamado.setUsuario(usuario);
-        chamado.setCategoria(categoria);
-        chamado.setSla(sla);
+            if (sla.getQtHorasResolucao() != null && chamado.getDtCriacao() != null) {
+                LocalTime hrVencimento = chamado.getHrCriacao().plusHours(sla.getQtHorasResolucao());
+                LocalDate dtVencimento = chamado.getDtCriacao();
+
+                if (hrVencimento.isBefore(chamado.getHrCriacao())) {
+                    dtVencimento = dtVencimento.plusDays(sla.getQtHorasResolucao() / 24);
+                }
+
+                chamado.setDtVencimento(dtVencimento);
+                chamado.setHrVencimento(hrVencimento);
+
+            }
+        }
 
         chamadoRepository.save(chamado);
 
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
+        return convertToResponseDTO(chamado);
 
     }
 
@@ -111,30 +128,17 @@ public class ChamadoService {
     public ChamadoResponseDTO atualizarStatus(Long cdChamado, Status status) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
+
+        if (Status.FECHADO.equals(chamado.getStatus())) {
+            throw new IllegalStateException("Não é possível alterar o status de um chamado já fechado!");
+        }
 
         chamado.setStatus(status);
 
         chamadoRepository.save(chamado);
 
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
+        return convertToResponseDTO(chamado);
 
     }
 
@@ -142,9 +146,9 @@ public class ChamadoService {
     public ChamadoResponseDTO fecharChamado(Long cdChamado, Status status) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
 
-        if ("FECHADO".equals(chamado.getStatus())) {
+        if (Status.FECHADO.equals(chamado.getStatus())) {
             throw new IllegalStateException("O chamado já está fechado");
         }
 
@@ -152,53 +156,19 @@ public class ChamadoService {
         chamado.setDtFechamento(LocalDate.now());
         chamado.setHrFechamento(LocalTime.now());
 
+        if (chamado.getDtVencimento() != null && chamado.getHrVencimento() != null) {
+            LocalDate hoje = LocalDate.now();
+            LocalTime agora = LocalTime.now();
+
+            if (hoje.isAfter(chamado.getDtVencimento()) ||
+                    (hoje.isEqual(chamado.getDtVencimento()) && agora.isAfter(chamado.getHrVencimento()))) {
+                chamado.setFlSlaViolado(true);
+            }
+        }
+
         chamadoRepository.save(chamado);
 
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
-
-    }
-
-    @Transactional
-    public ChamadoResponseDTO adicionarComentario(Long cdChamado) {
-
-        ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado"));
-
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
+        return convertToResponseDTO(chamado);
 
     }
 
@@ -206,7 +176,7 @@ public class ChamadoService {
     public ChamadoResponseDTO adicionarAnexo(Long cdChamado, Long cdAnexo) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
 
         AnexoModel anexo = anexoRepository.findById(cdAnexo)
                 .orElseThrow(() -> new RuntimeException("Anexo não encontrado!"));
@@ -215,33 +185,16 @@ public class ChamadoService {
 
         chamadoRepository.save(chamado);
 
-        return new ChamadoResponseDTO(
-
-                chamado.getCdChamado(),
-                chamado.getDsTitulo(),
-                chamado.getDsDescricao(),
-                chamado.getStatus(),
-                chamado.getUsuario(),
-                chamado.getAnexo(),
-                chamado.getCategoria(),
-                chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
-                chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
-                chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
-                chamado.getFlSlaViolado()
-
-        );
+        return convertToResponseDTO(chamado);
 
     }
 
     @Transactional
     public List<ChamadoResponseDTO> listarTodosChamados() {
 
-        List<ChamadoModel> chamado = chamadoRepository.findAll();
+        List<ChamadoModel> chamados = chamadoRepository.findAll();
 
-        return chamado.stream().map(this:: convertToResponseDTO).toList();
+        return chamados.stream().map(this::convertToResponseDTO).toList();
 
     }
 
@@ -249,7 +202,7 @@ public class ChamadoService {
     public ChamadoResponseDTO listarChamado(Long cdChamado) {
 
         ChamadoModel chamado = chamadoRepository.findById(cdChamado)
-                .orElseThrow(() -> new RuntimeException("Chamado não encontrado!"));
+                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
 
         return convertToResponseDTO(chamado);
 
@@ -258,15 +211,14 @@ public class ChamadoService {
     @Transactional
     public List<ChamadoResponseDTO> listarPorStatus(Status status) {
 
-        List<ChamadoModel> chamado = chamadoRepository.findAllByStatus(status);
+        List<ChamadoModel> chamados = chamadoRepository.findAllByStatus(status);
 
-        return chamado.stream().map(this:: convertToResponseDTO).toList();
+        return chamados.stream().map(this::convertToResponseDTO).toList();
 
     }
 
     private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
         return new ChamadoResponseDTO(
-
                 chamado.getCdChamado(),
                 chamado.getDsTitulo(),
                 chamado.getDsDescricao(),
@@ -281,9 +233,6 @@ public class ChamadoService {
                 chamado.getDtVencimento(),
                 chamado.getHrVencimento(),
                 chamado.getFlSlaViolado()
-
         );
     }
-
-
 }
