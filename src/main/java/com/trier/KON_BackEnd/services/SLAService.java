@@ -5,20 +5,16 @@ import com.trier.KON_BackEnd.dto.sla.SLAResponseListar;
 import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.exception.SLANaoEncontradoException;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
-import com.trier.KON_BackEnd.model.CategoriaModel;
-import com.trier.KON_BackEnd.model.PlanoModel;
-import com.trier.KON_BackEnd.model.SLAModel;
-import com.trier.KON_BackEnd.model.UsuarioModel;
-import com.trier.KON_BackEnd.repository.CategoriaRepository;
-import com.trier.KON_BackEnd.repository.PlanoRepository;
-import com.trier.KON_BackEnd.repository.SLARepository;
-import com.trier.KON_BackEnd.repository.UsuarioRepository;
+import com.trier.KON_BackEnd.model.*;
+import com.trier.KON_BackEnd.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +26,10 @@ public class SLAService {
     private final SLARepository slaRepository;
     private final CategoriaRepository catRepository;
     private final PlanoRepository planoRepository;
+    private final ChamadoRepository chamadoRepository;
 
     @Transactional
-    public SLAResponseDto criasSLA(SLARequestDto slaRequestDto) {
+    public SLAResponseDto criaSLA(SLARequestDto slaRequestDto) {
 
         CategoriaModel cat = catRepository.findById(slaRequestDto.cdCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
@@ -40,11 +37,22 @@ public class SLAService {
         PlanoModel plano = planoRepository.findById(slaRequestDto.cdPlano())
                 .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
+        LocalDateTime chamado = LocalDateTime.now();
+
         SLAModel sla = new SLAModel();
         sla.setCategoria(cat);
         sla.setPlano(plano);
-        sla.setQtHorasResposta(slaRequestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(slaRequestDto.qtHorasResolucao());
+
+        LocalDateTime horaResposta = chamado
+                .plusHours(plano.getHrRespostaPlano())
+                .plusHours(cat.getHrResposta());
+
+        LocalDateTime horaResolucao = chamado
+                .plusHours(plano.getHrResolucaoPlano())
+                .plusHours(cat.getHrResolucao());
+
+        sla.setQtHorasResposta(horaResposta);
+        sla.setQtHorasResolucao(horaResolucao);
 
         SLAModel salvo = slaRepository.save(sla);
 
@@ -70,8 +78,6 @@ public class SLAService {
 
         sla.setCategoria(cat);
         sla.setPlano(plano);
-        sla.setQtHorasResposta(requestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(requestDto.qtHorasResolucao());
 
         SLAModel atualizado = slaRepository.save(sla);
 

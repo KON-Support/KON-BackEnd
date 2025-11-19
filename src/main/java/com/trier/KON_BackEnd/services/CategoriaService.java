@@ -22,6 +22,8 @@ public class CategoriaService {
         CategoriaModel categoria = new CategoriaModel();
 
         categoria.setNmCategoria(categoriaRequest.nmCategoria());
+        categoria.setHrResposta(categoriaRequest.hrResposta());
+        categoria.setHrResolucao(categoriaRequest.hrResolucao());
         categoria.setFlAtivo(categoriaRequest.flAtivo());
 
         categoriaRepository.save(categoria);
@@ -30,6 +32,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
+                categoria.getHrResposta(),
+                categoria.getHrResolucao(),
                 categoria.getFlAtivo()
 
         );
@@ -50,6 +54,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
+                categoria.getHrResposta(),
+                categoria.getHrResolucao(),
                 categoria.getFlAtivo()
 
         );
@@ -70,6 +76,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
+                categoria.getHrResposta(),
+                categoria.getHrResolucao(),
                 categoria.getFlAtivo()
 
         );
@@ -90,6 +98,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
+                categoria.getHrResposta(),
+                categoria.getHrResolucao(),
                 categoria.getFlAtivo()
 
         );
@@ -130,6 +140,8 @@ public class CategoriaService {
 
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
+                categoria.getHrResposta(),
+                categoria.getHrResolucao(),
                 categoria.getFlAtivo()
 
         );

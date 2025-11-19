@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -16,9 +19,9 @@ public class SLAModel {
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdSLA;
 
-    private Integer qtHorasResposta;
+    private LocalDateTime qtHorasResposta;
 
-    private Integer qtHorasResolucao;
+    private LocalDateTime qtHorasResolucao;
 
     private boolean flAtivo = true;
 

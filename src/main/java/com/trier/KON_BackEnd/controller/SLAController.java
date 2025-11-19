@@ -29,7 +29,7 @@ public class SLAController {
     @PostMapping("/criar")
     @Operation(summary = "Cadastrar novo SLA", description = "Cria um novo sla no sistema")
     public ResponseEntity<SLAResponseDto> criarSLA(@Valid @RequestBody SLARequestDto slaRequestDto) {
-        SLAResponseDto criardSla = slaService.criasSLA(slaRequestDto);
+        SLAResponseDto criardSla = slaService.criaSLA(slaRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criardSla);
     }
 

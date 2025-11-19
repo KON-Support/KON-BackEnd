@@ -23,6 +23,12 @@ public class PlanoModel {
     @Column(nullable = false)
     private Double vlPlano;
 
+    @Column(name = "HRRESPOSTAPLANO")
+    private Integer hrRespostaPlano;
+
+    @Column(name = "HRRESOLUCAOPLANO")
+    private Integer hrResolucaoPlano;
+
     @Column(nullable = false)
     private Integer limiteUsuarios;
 }
