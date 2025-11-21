@@ -12,7 +12,8 @@ public record ComentarioResponseDTO(
         String nmUsuario,
         String dsConteudo,
         LocalDate dtCriacao,
-        LocalTime hrCriacao
+        LocalTime hrCriacao,
+        Long cdAnexo
 ) {
     public ComentarioResponseDTO(ComentarioModel comentario) {
         this(
@@ -22,7 +23,8 @@ public record ComentarioResponseDTO(
                 comentario.getUsuario().getNmUsuario(),
                 comentario.getDsConteudo(),
                 comentario.getDtCriacao(),
-                comentario.getHrCriacao()
+                comentario.getHrCriacao(),
+                comentario.getAnexo() != null ? comentario.getAnexo().getCdAnexo() : null
         );
     }
 }
