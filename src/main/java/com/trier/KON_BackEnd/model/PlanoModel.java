@@ -24,4 +24,8 @@ public class PlanoModel {
     private Double vlPlano;
 
     private Integer limiteUsuarios;
+
+    private Integer hrRespostaPlano;
+
+    private Integer hrResolucaoPlano;
 }
