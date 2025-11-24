@@ -24,7 +24,9 @@ public record ChamadoRequestDTO(
         @NotNull(message = "É preciso informar o código do solicitante(cliente)!")
         Long solicitante,
 
-        Long responsavel
+        Long responsavel,
+
+        Long cdPlano
 
 ) {
 }

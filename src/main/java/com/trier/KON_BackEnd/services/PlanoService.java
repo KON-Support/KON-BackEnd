@@ -27,6 +27,8 @@ public class PlanoService {
         plano.setNmPlano(dto.nmPlano());
         plano.setVlPlano(dto.vlPlano());
         plano.setLimiteUsuarios(dto.limiteUsuarios());
+        plano.setHrRespostaPlano(dto.hrRespostaPlano());
+        plano.setHrResolucaoPlano(dto.hrResolucaoPlano());
 
 
          planoRepository.save(plano);
@@ -51,6 +53,8 @@ public class PlanoService {
         plano.setNmPlano(dto.nmPlano());
         plano.setVlPlano(dto.vlPlano());
         plano.setLimiteUsuarios(dto.limiteUsuarios());
+        plano.setHrRespostaPlano(dto.hrRespostaPlano());
+        plano.setHrResolucaoPlano(dto.hrResolucaoPlano());
 
         planoRepository.save(plano);
 
@@ -62,7 +66,9 @@ public class PlanoService {
                 plano.getCdPlano(),
                 plano.getNmPlano(),
                 plano.getVlPlano(),
-                plano.getLimiteUsuarios()
+                plano.getLimiteUsuarios(),
+                plano.getHrRespostaPlano(),
+                plano.getHrResolucaoPlano()
         );
 
     }

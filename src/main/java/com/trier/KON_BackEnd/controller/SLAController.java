@@ -29,7 +29,7 @@ public class SLAController {
     @PostMapping("/criar")
     @Operation(summary = "Cadastrar novo SLA", description = "Cria um novo sla no sistema")
     public ResponseEntity<SLAResponseDto> criarSLA(@Valid @RequestBody SLARequestDto slaRequestDto) {
-        SLAResponseDto criardSla = slaService.criasSLA(slaRequestDto);
+        SLAResponseDto criardSla = slaService.criaSLA(slaRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(criardSla);
     }
 
@@ -39,7 +39,7 @@ public class SLAController {
                                                        @Valid @RequestBody SLARequestDto slaResquest) {
 
         try {
-            SLAResponseDto atualizado = slaService.autalizarSLA(slaResquest, cdSLA);
+            SLAResponseDto atualizado = slaService.atualizarSLA(slaResquest, cdSLA);
             System.out.println("SLA atualizado");
             return ResponseEntity.ok(atualizado);
         } catch (Exception e) {
@@ -64,4 +64,15 @@ public class SLAController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @GetMapping("/listar/{cdCategoria}/{cdPlano}")
+    @Operation(summary = "Buscar SLA por categoria e plano", description = "Retorna todos os SLAs vinculados a uma categoria e plano específicos")
+    public ResponseEntity<List<SLAResponseDto>> buscarPorCategoriaEPlano(@RequestParam Long cdCategoria,@RequestParam Long cdplano){
+        try{
+            List<SLAResponseDto> sla = slaService.buscarCategoriaPlano(cdCategoria, cdplano);
+            return ResponseEntity.ok(sla);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }

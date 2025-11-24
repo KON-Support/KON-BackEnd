@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -20,12 +23,12 @@ public class SLAModel {
 
     private Integer qtHorasResolucao;
 
-    private String flAtivo = "S";
+    private boolean flAtivo = true;
 
     @JsonManagedReference
     @ManyToOne
-    @JoinColumn(name = "cdUsuario")
-    private UsuarioModel usuario;
+    @JoinColumn(name = "cdPlano")
+    private PlanoModel plano;
 
     @JsonManagedReference
     @ManyToOne

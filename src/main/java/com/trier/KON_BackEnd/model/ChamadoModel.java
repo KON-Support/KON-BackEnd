@@ -4,8 +4,7 @@ import com.trier.KON_BackEnd.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_chamados")
@@ -47,26 +46,22 @@ public class ChamadoModel {
     private CategoriaModel categoria;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PLANO", referencedColumnName = "CDPLANO", nullable = false)
+    private PlanoModel plano;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SLA", referencedColumnName = "CDSLA")
     private SLAModel sla;
 
     @Column(name = "DTCRIACAO", nullable = false)
-    private LocalDate dtCriacao;
-
-    @Column(name = "HRCRIACAO", nullable = false)
-    private LocalTime hrCriacao;
+    private LocalDateTime dtCriacao;
 
     @Column(name = "DTFECHAMENTO")
-    private LocalDate dtFechamento;
-
-    @Column(name = "HRFECHAMENTO")
-    private LocalTime hrFechamento;
+    private LocalDateTime dtFechamento;
 
     @Column(name = "DTVENCIMENTO")
-    private LocalDate dtVencimento;
-
-    @Column(name = "HRVENCIMENTO")
-    private LocalTime hrVencimento;
+    private LocalDateTime dtVencimento;
 
     @Column(name = "FLSLAVIOLADO", nullable = false)
     private Boolean flSlaViolado = false;
@@ -74,10 +69,7 @@ public class ChamadoModel {
     @PrePersist
     protected void onCreate() {
         if (dtCriacao == null) {
-            dtCriacao = LocalDate.now();
-        }
-        if (hrCriacao == null) {
-            hrCriacao = LocalTime.now();
+            dtCriacao = LocalDateTime.now();
         }
         if (flSlaViolado == null) {
             flSlaViolado = false;

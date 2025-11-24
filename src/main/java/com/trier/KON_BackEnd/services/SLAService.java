@@ -5,20 +5,19 @@ import com.trier.KON_BackEnd.dto.sla.SLAResponseListar;
 import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.exception.SLANaoEncontradoException;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
-import com.trier.KON_BackEnd.model.CategoriaModel;
-import com.trier.KON_BackEnd.model.SLAModel;
-import com.trier.KON_BackEnd.model.UsuarioModel;
-import com.trier.KON_BackEnd.repository.CategoriaRepository;
-import com.trier.KON_BackEnd.repository.SLARepository;
-import com.trier.KON_BackEnd.repository.UsuarioRepository;
+import com.trier.KON_BackEnd.model.*;
+import com.trier.KON_BackEnd.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -27,56 +26,56 @@ public class SLAService {
 
     private final SLARepository slaRepository;
     private final CategoriaRepository catRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final PlanoRepository planoRepository;
+    private final ChamadoRepository chamadoRepository;
 
     @Transactional
-    public SLAResponseDto criasSLA(SLARequestDto slaRequestDto) {
+    public SLAResponseDto criaSLA(SLARequestDto slaRequestDto) {
 
         CategoriaModel cat = catRepository.findById(slaRequestDto.cdCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        UsuarioModel usuario = usuarioRepository.findById(slaRequestDto.cdUsuario())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(slaRequestDto.cdUsuario()));
+        PlanoModel plano = planoRepository.findById(slaRequestDto.cdPlano())
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
+
 
         SLAModel sla = new SLAModel();
         sla.setCategoria(cat);
-        sla.setUsuario(usuario);
-        sla.setQtHorasResposta(slaRequestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(slaRequestDto.qtHorasResolucao());
+        sla.setPlano(plano);
+        sla.setQtHorasResposta(cat.getHrResposta() + plano.getHrRespostaPlano());
+        sla.setQtHorasResolucao(cat.getHrResolucao() + plano.getHrResolucaoPlano());
 
         SLAModel salvo = slaRepository.save(sla);
 
         return new SLAResponseDto(
                 salvo.getCdSLA(),
-                salvo.getCategoria().getCdCategoria(),
-                salvo.getUsuario().getCdUsuario(),
+                salvo.getCategoria().getNmCategoria(),
+                salvo.getPlano().getNmPlano(),
                 salvo.getQtHorasResposta(),
                 salvo.getQtHorasResolucao()
         );
     }
 
     @Transactional
-    public SLAResponseDto autalizarSLA(SLARequestDto requestDto, Long cdSLA) {
+    public SLAResponseDto atualizarSLA(SLARequestDto requestDto, Long cdSLA) {
         SLAModel sla = slaRepository.findByCdSLA(cdSLA)
                 .orElseThrow(() -> new SLANaoEncontradoException("SLA não encontrado: " + cdSLA));
 
         CategoriaModel cat = catRepository.findById(requestDto.cdCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        UsuarioModel usuario = usuarioRepository.findById(requestDto.cdUsuario())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException(requestDto.cdUsuario()));
+        PlanoModel plano = planoRepository.findById(requestDto.cdPlano())
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
         sla.setCategoria(cat);
-        sla.setUsuario(usuario);
-        sla.setQtHorasResposta(requestDto.qtHorasResposta());
-        sla.setQtHorasResolucao(requestDto.qtHorasResolucao());
+        sla.setPlano(plano);
 
         SLAModel atualizado = slaRepository.save(sla);
 
         return new SLAResponseDto(
                 atualizado.getCdSLA(),
-                atualizado.getCategoria().getCdCategoria(),
-                atualizado.getUsuario().getCdUsuario(),
+                atualizado.getCategoria().getNmCategoria(),
+                atualizado.getPlano().getNmPlano(),
                 atualizado.getQtHorasResposta(),
                 atualizado.getQtHorasResolucao()
         );
@@ -89,7 +88,7 @@ public class SLAService {
                 .map(sla -> new SLAResponseListar(
                         sla.getCdSLA(),
                         sla.getCategoria().getNmCategoria(),
-                        sla.getUsuario().getNmUsuario(),
+                        sla.getPlano().getNmPlano(),
                         sla.getQtHorasResposta(),
                         sla.getQtHorasResolucao()
                 ))
@@ -109,11 +108,31 @@ public class SLAService {
                 .map(slas -> new SLAResponseListar(
                         slas.getCdSLA(),
                         slas.getCategoria().getNmCategoria(),
-                        slas.getUsuario().getNmUsuario(),
+                        slas.getPlano().getNmPlano(),
                         slas.getQtHorasResposta(),
                         slas.getQtHorasResolucao()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<SLAResponseDto> buscarCategoriaPlano(Long cdCategoria, Long cdPlano) {
+        CategoriaModel categoria = catRepository.findById(cdCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + cdCategoria));
+
+        PlanoModel plano = planoRepository.findById(cdPlano)
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado: " + cdPlano));
+
+        List<SLAModel> sla = slaRepository.findByCategoriaCdCategoriaAndPlanoCdPlano(cdCategoria, cdPlano);
+
+        return sla.stream()
+                .map(slas -> new SLAResponseDto(
+                        slas.getCdSLA(),
+                        slas.getPlano().getNmPlano(),
+                        slas.getCategoria().getNmCategoria(),
+                        slas.getQtHorasResposta(),
+                        slas.getQtHorasResolucao()
+                )).collect(Collectors.toList());
     }
 
 }

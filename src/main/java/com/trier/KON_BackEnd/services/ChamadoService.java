@@ -3,9 +3,7 @@ package com.trier.KON_BackEnd.services;
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
-import com.trier.KON_BackEnd.exception.CategoriaNaoEncontradoException;
-import com.trier.KON_BackEnd.exception.ChamadoNaoEncontradoException;
-import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
+import com.trier.KON_BackEnd.exception.*;
 import com.trier.KON_BackEnd.model.*;
 import com.trier.KON_BackEnd.repository.*;
 import jakarta.transaction.Transactional;
@@ -35,6 +33,9 @@ public class ChamadoService {
     @Autowired
     private AnexoRepository anexoRepository;
 
+    @Autowired
+    private PlanoRepository planoRepository;
+
     @Transactional
     public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) {
 
@@ -44,6 +45,13 @@ public class ChamadoService {
         CategoriaModel categoria = categoriaRepository.findById(chamadoRequest.cdCategoria())
                 .orElseThrow(() -> new CategoriaNaoEncontradoException(chamadoRequest.cdCategoria()));
 
+        PlanoModel plano = planoRepository.findById(chamadoRequest.cdPlano())
+                .orElseThrow(() -> new PlanoNaoEncontradoException(chamadoRequest.cdPlano()));
+
+        SLAModel sla = slaRepository.findByCategoriaCdCategoriaAndPlanoCdPlano(categoria.getCdCategoria(), plano.getCdPlano())
+                .stream().findFirst()
+                .orElseThrow(() -> new SLANaoEncontradoException("SLA não encontrado"));
+
         ChamadoModel chamado = new ChamadoModel();
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
@@ -51,8 +59,9 @@ public class ChamadoService {
         chamado.setCategoria(categoria);
         chamado.setSolicitante(solicitante);
         chamado.setFlSlaViolado(false);
-        chamado.setDtCriacao(LocalDate.now());
-        chamado.setHrCriacao(LocalTime.now());
+        chamado.setDtCriacao(LocalDateTime.now());
+        chamado.setPlano(plano);
+        chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResposta()));
 
         if (chamadoRequest.responsavel() != null) {
             UsuarioModel responsavel = usuarioRepository.findById(chamadoRequest.responsavel())
@@ -88,11 +97,7 @@ public class ChamadoService {
             chamado.setSla(sla);
 
             if (sla.getQtHorasResolucao() != null && chamado.getDtCriacao() != null) {
-                LocalDateTime dtHrCriacao = LocalDateTime.of(chamado.getDtCriacao(), chamado.getHrCriacao());
-                LocalDateTime dtHrVencimento = dtHrCriacao.plusHours(sla.getQtHorasResolucao());
-
-                chamado.setDtVencimento(dtHrVencimento.toLocalDate());
-                chamado.setHrVencimento(dtHrVencimento.toLocalTime());
+                chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResolucao()));
             }
         }
 
@@ -133,13 +138,12 @@ public class ChamadoService {
 
         chamado.setStatus(status);
         LocalDateTime agora = LocalDateTime.now();
-        chamado.setDtFechamento(agora.toLocalDate());
-        chamado.setHrFechamento(agora.toLocalTime());
+        chamado.setDtFechamento(agora);
 
-        if (chamado.getDtVencimento() != null && chamado.getHrVencimento() != null) {
-            LocalDateTime dtHrVencimento = LocalDateTime.of(chamado.getDtVencimento(), chamado.getHrVencimento());
+        if (chamado.getDtVencimento() != null) {
+            chamado.setDtVencimento(agora);
 
-            if (agora.isAfter(dtHrVencimento)) {
+            if (agora.isAfter(chamado.getDtVencimento())) {
                 chamado.setFlSlaViolado(true);
             }
         }
@@ -239,11 +243,8 @@ public class ChamadoService {
                 categoriaDTO,
                 slaDTO,
                 chamado.getDtCriacao(),
-                chamado.getHrCriacao(),
                 chamado.getDtFechamento(),
-                chamado.getHrFechamento(),
                 chamado.getDtVencimento(),
-                chamado.getHrVencimento(),
                 chamado.getFlSlaViolado()
         );
     }

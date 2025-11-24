@@ -2,6 +2,7 @@ package com.trier.KON_BackEnd.dto.response;
 
 import com.trier.KON_BackEnd.enums.Status;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record ChamadoResponseDTO(
@@ -15,12 +16,9 @@ public record ChamadoResponseDTO(
         AnexoSimplesDTO anexo,
         CategoriaSimplesDTO categoria,
         SLASimplesDTO sla,
-        LocalDate dtCriacao,
-        LocalTime hrCriacao,
-        LocalDate dtFechamento,
-        LocalTime hrFechamento,
-        LocalDate dtVencimento,
-        LocalTime hrVencimento,
+        LocalDateTime dtCriacao,
+        LocalDateTime dtFechamento,
+        LocalDateTime dtVencimento,
         Boolean flSlaViolado
 
 ) {

@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
+
 public record CategoriaRequestDTO(
 
         @NotBlank(message = "É preciso informar um nome para uma Categoria!")
@@ -11,7 +13,13 @@ public record CategoriaRequestDTO(
         String nmCategoria,
 
         @NotNull(message = "É preciso informar se a categoria está ativa!")
-        Boolean flAtivo
+        Boolean flAtivo,
+
+        @NotNull(message = "É preciso informar se a hora base para resposta!")
+        Integer hrResposta,
+
+        @NotNull(message = "É preciso informar se a hora base para resolução!")
+        Integer hrResolucao
 
 ) {
 }

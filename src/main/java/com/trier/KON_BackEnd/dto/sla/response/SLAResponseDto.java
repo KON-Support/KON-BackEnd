@@ -10,8 +10,8 @@ import java.time.LocalTime;
 
 public record SLAResponseDto(
         Long cdSLA,
-        Long cdCategoria,
-        Long cdUsuario,
+        String cdCategoria,
+        String cdPlano,
         Integer qtHorasResposta,
         Integer qtHorasResolucao
 ) {
