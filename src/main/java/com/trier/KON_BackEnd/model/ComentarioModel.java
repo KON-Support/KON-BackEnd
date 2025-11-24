@@ -30,6 +30,10 @@ public class ComentarioModel {
     @JoinColumn(name = "CDUSUARIO", nullable = false)
     private UsuarioModel usuario;
 
+    @OneToOne
+    @JoinColumn(name = "CDANEXO")
+    private AnexoModel anexo;
+
     @Column(nullable = false)
     private String dsConteudo;
 

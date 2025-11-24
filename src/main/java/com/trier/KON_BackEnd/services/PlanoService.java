@@ -3,6 +3,8 @@ package com.trier.KON_BackEnd.services;
 import com.trier.KON_BackEnd.dto.request.PlanoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.PlanoResponseDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
+import com.trier.KON_BackEnd.exception.NenhumPlanoEncontradoException;
+import com.trier.KON_BackEnd.exception.PlanoNaoEncontradoException;
 import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
 import com.trier.KON_BackEnd.repository.PlanoRepository;
@@ -25,26 +27,34 @@ public class PlanoService {
         plano.setNmPlano(dto.nmPlano());
         plano.setVlPlano(dto.vlPlano());
         plano.setLimiteUsuarios(dto.limiteUsuarios());
-        plano.setHrRespostaPlano(dto.hrRespostaPlano());
-        plano.setHrResolucaoPlano(dto.hrResolucaoPlano());
 
 
          planoRepository.save(plano);
 
-         return new PlanoResponseDTO(
-                 plano.getCdPlano(),
-                 plano.getNmPlano(),
-                 plano.getVlPlano(),
-                 plano.getLimiteUsuarios(),
-                 plano.getHrRespostaPlano(),
-                 plano.getHrResolucaoPlano()
-         );
+         return converterParaResponse(plano);
 
     }
 
     public List<PlanoResponseDTO> listarTodos() {
         List<PlanoModel> plano = planoRepository.findAll();
+
+        if (plano.isEmpty()) {
+            throw new NenhumPlanoEncontradoException();
+        }
         return plano.stream().map(this::converterParaResponse).collect(Collectors.toList());
+    }
+
+    public PlanoResponseDTO atualizarPlano(PlanoRequestDTO dto, Long cdPlano) {
+        PlanoModel plano = planoRepository.findById(cdPlano)
+                .orElseThrow(() -> new PlanoNaoEncontradoException(cdPlano));
+
+        plano.setNmPlano(dto.nmPlano());
+        plano.setVlPlano(dto.vlPlano());
+        plano.setLimiteUsuarios(dto.limiteUsuarios());
+
+        planoRepository.save(plano);
+
+        return converterParaResponse(plano);
     }
 
     private PlanoResponseDTO converterParaResponse(PlanoModel plano) {
@@ -52,10 +62,7 @@ public class PlanoService {
                 plano.getCdPlano(),
                 plano.getNmPlano(),
                 plano.getVlPlano(),
-                plano.getLimiteUsuarios(),
-                plano.getHrRespostaPlano(),
-                plano.getHrResolucaoPlano()
-
+                plano.getLimiteUsuarios()
         );
 
     }

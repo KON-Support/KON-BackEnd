@@ -1,6 +1,7 @@
 package com.trier.KON_BackEnd.controller;
 
 import com.trier.KON_BackEnd.dto.request.CategoriaRequestDTO;
+import com.trier.KON_BackEnd.dto.request.CategoriaUpdateRequestDTO;
 import com.trier.KON_BackEnd.dto.response.CategoriaResponseDTO;
 import com.trier.KON_BackEnd.services.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categoria")
+@CrossOrigin(origins = "*")
 @Tag(name = "Categoria", description = "API para gerenciamento de categorias")
 public class CategoriaController {
 
@@ -54,7 +56,7 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponseDTO> atualizarCategoria(
             @Parameter(description = "ID da categoria a ser atualizada", required = true)
             @PathVariable Long cdCategoria,
-            @RequestBody @Valid CategoriaRequestDTO categoriaRequest) {
+            @RequestBody @Valid CategoriaUpdateRequestDTO categoriaRequest) {
 
         var categoria = categoriaService.atualizarCategoria(cdCategoria, categoriaRequest);
 
@@ -77,7 +79,7 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(categoria);
     }
 
-    @PutMapping("/reativar/{cdCategoria}")
+    @PatchMapping("/reativar/{cdCategoria}")
     @Operation(summary = "Reativar categoria", description = "Reativa uma categoria previamente desativada")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categoria reativada com sucesso",

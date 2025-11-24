@@ -1,9 +1,6 @@
 package com.trier.KON_BackEnd.dto.request;
 
-import com.trier.KON_BackEnd.enums.Prioridade;
 import com.trier.KON_BackEnd.enums.Status;
-import com.trier.KON_BackEnd.model.CategoriaModel;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,14 +15,16 @@ public record ChamadoRequestDTO(
         @Size(max = 300, message = "O máximo de caracteres é 300!")
         String dsDescricao,
 
-        @Enumerated
+        @NotNull(message = "É preciso informar o status do chamado!")
         Status status,
 
-        @NotBlank(message = "É preciso informar o nome da categoria!")
-        CategoriaModel categoria,
+        @NotNull(message = "É preciso informar o código da categoria!")
+        Long cdCategoria,
 
-        @NotNull(message = "É preciso informar se o chamado está com o SLA violado ou não!")
-        Boolean flSlaViolado
+        @NotNull(message = "É preciso informar o código do solicitante(cliente)!")
+        Long solicitante,
+
+        Long responsavel
 
 ) {
 }

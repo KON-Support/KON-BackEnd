@@ -1,6 +1,7 @@
 package com.trier.KON_BackEnd.services;
 
 import com.trier.KON_BackEnd.dto.request.CategoriaRequestDTO;
+import com.trier.KON_BackEnd.dto.request.CategoriaUpdateRequestDTO;
 import com.trier.KON_BackEnd.dto.response.CategoriaResponseDTO;
 import com.trier.KON_BackEnd.model.CategoriaModel;
 import com.trier.KON_BackEnd.repository.CategoriaRepository;
@@ -41,25 +42,26 @@ public class CategoriaService {
     }
 
     @Transactional
-    public CategoriaResponseDTO atualizarCategoria(Long cdCategoria , CategoriaRequestDTO categoriaRequest) {
+    public CategoriaResponseDTO atualizarCategoria(Long cdCategoria, CategoriaUpdateRequestDTO categoriaRequest) {
 
         var categoria = categoriaRepository.findById(cdCategoria)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada!"));
 
         categoria.setNmCategoria(categoriaRequest.nmCategoria());
 
+        if (categoriaRequest.flAtivo() != null) {
+            categoria.setFlAtivo(categoriaRequest.flAtivo());
+        }
+
         categoriaRepository.save(categoria);
 
         return new CategoriaResponseDTO(
-
                 categoria.getCdCategoria(),
                 categoria.getNmCategoria(),
                 categoria.getHrResposta(),
                 categoria.getHrResolucao(),
                 categoria.getFlAtivo()
-
         );
-
     }
 
     @Transactional

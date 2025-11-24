@@ -35,4 +35,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity.status(404).body(response);
     }
+    @ExceptionHandler(CategoriaNaoEncontradoException.class)
+    private ResponseEntity<?> CategoriaNaoEncontradoException(CategoriaNaoEncontradoException exception) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(404).body(response);
+    }
+    @ExceptionHandler(PlanoNaoEncontradoException.class)
+    private ResponseEntity<?> PlanoNaoEncontradoException(PlanoNaoEncontradoException exception) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(404).body(response);
+    }
+    @ExceptionHandler(NenhumPlanoEncontradoException.class)
+    private ResponseEntity<?> NenhumPlanoEncontradoException(NenhumPlanoEncontradoException exception) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(404).body(response);
+    }
 }
