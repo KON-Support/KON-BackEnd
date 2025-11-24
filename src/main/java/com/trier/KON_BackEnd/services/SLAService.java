@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -37,22 +38,12 @@ public class SLAService {
         PlanoModel plano = planoRepository.findById(slaRequestDto.cdPlano())
                 .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
-        LocalDateTime chamado = LocalDateTime.now();
 
         SLAModel sla = new SLAModel();
         sla.setCategoria(cat);
         sla.setPlano(plano);
-
-        LocalDateTime horaResposta = chamado
-                .plusHours(plano.getHrRespostaPlano())
-                .plusHours(cat.getHrResposta());
-
-        LocalDateTime horaResolucao = chamado
-                .plusHours(plano.getHrResolucaoPlano())
-                .plusHours(cat.getHrResolucao());
-
-        sla.setQtHorasResposta(horaResposta);
-        sla.setQtHorasResolucao(horaResolucao);
+        sla.setQtHorasResposta(cat.getHrResposta() + plano.getHrRespostaPlano());
+        sla.setQtHorasResolucao(cat.getHrResolucao() + plano.getHrResolucaoPlano());
 
         SLAModel salvo = slaRepository.save(sla);
 
@@ -122,6 +113,26 @@ public class SLAService {
                         slas.getQtHorasResolucao()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<SLAResponseDto> buscarCategoriaPlano(Long cdCategoria, Long cdPlano) {
+        CategoriaModel categoria = catRepository.findById(cdCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + cdCategoria));
+
+        PlanoModel plano = planoRepository.findById(cdPlano)
+                .orElseThrow(() -> new RuntimeException("Plano não encontrado: " + cdPlano));
+
+        List<SLAModel> sla = slaRepository.findByCategoriaCdCategoriaAndPlanoCdPlano(cdCategoria, cdPlano);
+
+        return sla.stream()
+                .map(slas -> new SLAResponseDto(
+                        slas.getCdSLA(),
+                        slas.getPlano().getNmPlano(),
+                        slas.getCategoria().getNmCategoria(),
+                        slas.getQtHorasResposta(),
+                        slas.getQtHorasResolucao()
+                )).collect(Collectors.toList());
     }
 
 }

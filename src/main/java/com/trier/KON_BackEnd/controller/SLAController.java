@@ -64,4 +64,15 @@ public class SLAController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @GetMapping("/listar/{cdCategoria}/{cdPlano}")
+    @Operation(summary = "Buscar SLA por categoria e plano", description = "Retorna todos os SLAs vinculados a uma categoria e plano específicos")
+    public ResponseEntity<List<SLAResponseDto>> buscarPorCategoriaEPlano(@RequestParam Long cdCategoria,@RequestParam Long cdplano){
+        try{
+            List<SLAResponseDto> sla = slaService.buscarCategoriaPlano(cdCategoria, cdplano);
+            return ResponseEntity.ok(sla);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }
