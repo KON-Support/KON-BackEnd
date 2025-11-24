@@ -19,9 +19,9 @@ public class SLAModel {
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdSLA;
 
-    private LocalDateTime qtHorasResposta;
+    private Integer qtHorasResposta;
 
-    private LocalDateTime qtHorasResolucao;
+    private Integer qtHorasResolucao;
 
     private boolean flAtivo = true;
 

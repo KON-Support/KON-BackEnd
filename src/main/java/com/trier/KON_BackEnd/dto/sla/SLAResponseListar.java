@@ -10,7 +10,7 @@ public record SLAResponseListar(
         Long cdSLA,
         String categoria,
         String plano,
-        LocalDateTime qtHorasResposta,
-        LocalDateTime qtHorasResolucao
+        Integer qtHorasResposta,
+        Integer qtHorasResolucao
 ) {
 }

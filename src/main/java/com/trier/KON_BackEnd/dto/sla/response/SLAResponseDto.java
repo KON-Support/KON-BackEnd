@@ -12,7 +12,7 @@ public record SLAResponseDto(
         Long cdSLA,
         String cdCategoria,
         String cdPlano,
-        LocalDateTime qtHorasResposta,
-        LocalDateTime qtHorasResolucao
+        Integer qtHorasResposta,
+        Integer qtHorasResolucao
 ) {
 }
