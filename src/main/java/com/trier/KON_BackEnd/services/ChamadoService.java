@@ -1,5 +1,6 @@
 package com.trier.KON_BackEnd.services;
 
+import ch.qos.logback.classic.Logger;
 import com.trier.KON_BackEnd.dto.request.ChamadoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.ChamadoResponseDTO;
 import com.trier.KON_BackEnd.enums.Status;
@@ -7,6 +8,7 @@ import com.trier.KON_BackEnd.exception.*;
 import com.trier.KON_BackEnd.model.*;
 import com.trier.KON_BackEnd.repository.*;
 import jakarta.transaction.Transactional;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +47,7 @@ public class ChamadoService {
         CategoriaModel categoria = categoriaRepository.findById(chamadoRequest.cdCategoria())
                 .orElseThrow(() -> new CategoriaNaoEncontradoException(chamadoRequest.cdCategoria()));
 
-        PlanoModel plano = planoRepository.findById(chamadoRequest.cdPlano())
+        PlanoModel plano = planoRepository.findById(solicitante.getPlano().getCdPlano())
                 .orElseThrow(() -> new PlanoNaoEncontradoException(chamadoRequest.cdPlano()));
 
         SLAModel sla = slaRepository.findByCategoriaCdCategoriaAndPlanoCdPlano(categoria.getCdCategoria(), plano.getCdPlano())
