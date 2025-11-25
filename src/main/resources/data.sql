@@ -52,11 +52,9 @@ INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 1, 1 WHERE NOT EXISTS (S
 
 -- Usuario 2 (Admin) -> Role 2 (Admin) e Role 1 (User)
 INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 2, 2 WHERE NOT EXISTS (SELECT 1 FROM TBUSUARIOROLES WHERE usuario_id = 2 AND role_id = 2);
-INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 2, 1 WHERE NOT EXISTS (SELECT 1 FROM TBUSUARIOROLES WHERE usuario_id = 2 AND role_id = 1);
 
 -- Usuario 3 (Agente) -> Role 3 (Agente) e Role 1 (User)
 INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 3, 3 WHERE NOT EXISTS (SELECT 1 FROM TBUSUARIOROLES WHERE usuario_id = 3 AND role_id = 3);
-INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 3, 1 WHERE NOT EXISTS (SELECT 1 FROM TBUSUARIOROLES WHERE usuario_id = 3 AND role_id = 1);
 
 -- 7. CHAMADOS (Evita duplicar se já existir um chamado com mesmo título para o mesmo solicitante)
 INSERT INTO tb_chamados (DSTITULO, DSDESCRICAO, STATUS, SOLICITANTE, RESPONSAVEL, ANEXO, CATEGORIA, SLA, DTCRIACAO, DTFECHAMENTO, DTVENCIMENTO, FLSLAVIOLADO)
