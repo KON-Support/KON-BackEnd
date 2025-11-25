@@ -58,26 +58,12 @@ public class ChamadoService {
 
         ChamadoModel chamado = new ChamadoModel();
 
-        AnexoModel anexoModel = new AnexoModel();
-        anexoModel.setChamado(chamado);
-        anexoModel.setUsuario(solicitante);
-        anexoModel.setDtUpload(LocalDate.now());
-        anexoModel.setHrUpload(LocalTime.now());
-
-        MultipartFile arquivo = chamadoRequest.anexo();
-        anexoModel.setNmArquivo(arquivo.getOriginalFilename());
-        anexoModel.setDsTipoArquivo(arquivo.getContentType());
-        anexoModel.setArquivo(arquivo.getBytes());
-
-        anexoRepository.save(anexoModel);
-
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
         chamado.setStatus(chamadoRequest.status());
         chamado.setCategoria(categoria);
         chamado.setSolicitante(solicitante);
         chamado.setFlSlaViolado(false);
-        chamado.setAnexo(anexoModel);
         chamado.setDtCriacao(LocalDateTime.now());
         chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResposta()));
 
@@ -88,6 +74,24 @@ public class ChamadoService {
         }
 
         chamadoRepository.save(chamado);
+
+        MultipartFile arquivo = chamadoRequest.anexo();
+        if (arquivo != null && !arquivo.isEmpty()) {
+            AnexoModel anexoModel = new AnexoModel();
+            anexoModel.setChamado(chamado);
+            anexoModel.setUsuario(solicitante);
+            anexoModel.setDtUpload(LocalDate.now());
+            anexoModel.setHrUpload(LocalTime.now());
+            anexoModel.setNmArquivo(arquivo.getOriginalFilename());
+            anexoModel.setDsTipoArquivo(arquivo.getContentType());
+            anexoModel.setArquivo(arquivo.getBytes());
+
+            anexoRepository.save(anexoModel);
+
+            chamado.setAnexo(anexoModel);
+            chamadoRepository.save(chamado);
+        }
+
         return convertToResponseDTO(chamado);
     }
 
