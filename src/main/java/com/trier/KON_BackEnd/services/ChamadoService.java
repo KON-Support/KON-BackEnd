@@ -191,6 +191,24 @@ public class ChamadoService {
         return chamados.stream().map(this::convertToResponseDTO).toList();
     }
 
+    @Transactional
+    public List<ChamadoResponseDTO> listarPorSolicitante(Long cdUsuario) {
+        List<ChamadoModel> chamados = chamadoRepository.findAllBySolicitante_CdUsuario(cdUsuario);
+        return chamados.stream().map(this::convertToResponseDTO).toList();
+    }
+
+    @Transactional
+    public List<ChamadoResponseDTO> listarPorResponsavel(Long cdUsuario) {
+        List<ChamadoModel> chamados = chamadoRepository.findAllByResponsavel_CdUsuario(cdUsuario);
+        return chamados.stream().map(this::convertToResponseDTO).toList();
+    }
+
+    @Transactional
+    public List<ChamadoResponseDTO> listarNaoAtribuidos() {
+        List<ChamadoModel> chamados = chamadoRepository.findAllByResponsavelIsNull();
+        return chamados.stream().map(this::convertToResponseDTO).toList();
+    }
+
     private ChamadoResponseDTO convertToResponseDTO(ChamadoModel chamado) {
 
         ChamadoResponseDTO.UsuarioSimplesDTO solicitanteDTO = null;
