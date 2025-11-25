@@ -103,6 +103,7 @@ public class ChamadoService {
             }
         }
 
+        chamado.setStatus(Status.EM_ANDAMENTO);
         chamadoRepository.save(chamado);
 
         return convertToResponseDTO(chamado);
