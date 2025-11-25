@@ -33,8 +33,7 @@ public record ChamadoResponseDTO(
     public record AnexoSimplesDTO(
 
             Long cdAnexo,
-            String nmArquivo,
-            String dsTipoArquivo
+            String nmArquivo
 
     ) {}
 

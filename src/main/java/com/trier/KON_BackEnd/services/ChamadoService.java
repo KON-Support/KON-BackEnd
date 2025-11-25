@@ -11,7 +11,9 @@ import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,7 +41,7 @@ public class ChamadoService {
     private PlanoRepository planoRepository;
 
     @Transactional
-    public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) {
+    public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) throws IOException {
 
         UsuarioModel solicitante = usuarioRepository.findById(chamadoRequest.solicitante())
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(chamadoRequest.solicitante()));
@@ -60,9 +62,9 @@ public class ChamadoService {
         chamado.setStatus(chamadoRequest.status());
         chamado.setCategoria(categoria);
         chamado.setSolicitante(solicitante);
+        chamado.setSla(sla);
         chamado.setFlSlaViolado(false);
         chamado.setDtCriacao(LocalDateTime.now());
-        chamado.setPlano(plano);
         chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResposta()));
 
         if (chamadoRequest.responsavel() != null) {
@@ -72,6 +74,24 @@ public class ChamadoService {
         }
 
         chamadoRepository.save(chamado);
+
+        MultipartFile arquivo = chamadoRequest.anexo();
+        if (arquivo != null && !arquivo.isEmpty()) {
+            AnexoModel anexoModel = new AnexoModel();
+            anexoModel.setChamado(chamado);
+            anexoModel.setUsuario(solicitante);
+            anexoModel.setDtUpload(LocalDate.now());
+            anexoModel.setHrUpload(LocalTime.now());
+            anexoModel.setNmArquivo(arquivo.getOriginalFilename());
+            anexoModel.setDsTipoArquivo(arquivo.getContentType());
+            anexoModel.setArquivo(arquivo.getBytes());
+
+            anexoRepository.save(anexoModel);
+
+            chamado.setAnexo(anexoModel);
+            chamadoRepository.save(chamado);
+        }
+
         return convertToResponseDTO(chamado);
     }
 
@@ -157,21 +177,6 @@ public class ChamadoService {
     }
 
     @Transactional
-    public ChamadoResponseDTO adicionarAnexo(Long cdChamado, Long cdAnexo) {
-
-        ChamadoModel chamado = chamadoRepository.findByIdWithRelations(cdChamado)
-                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
-
-        AnexoModel anexo = anexoRepository.findById(cdAnexo)
-                .orElseThrow(() -> new RuntimeException("Anexo não encontrado!"));
-
-        chamado.setAnexo(anexo);
-        chamadoRepository.save(chamado);
-
-        return convertToResponseDTO(chamado);
-    }
-
-    @Transactional
     public List<ChamadoResponseDTO> listarTodosChamados() {
         List<ChamadoModel> chamados = chamadoRepository.findAll();
         return chamados.stream().map(this::convertToResponseDTO).toList();
@@ -231,8 +236,7 @@ public class ChamadoService {
         if (chamado.getAnexo() != null) {
             anexoDTO = new ChamadoResponseDTO.AnexoSimplesDTO(
                     chamado.getAnexo().getCdAnexo(),
-                    chamado.getAnexo().getNmArquivo(),
-                    chamado.getAnexo().getDsTipoArquivo()
+                    chamado.getAnexo().getNmArquivo()
             );
         }
 
