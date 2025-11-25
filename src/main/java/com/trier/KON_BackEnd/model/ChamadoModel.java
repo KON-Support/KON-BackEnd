@@ -46,11 +46,6 @@ public class ChamadoModel {
     private CategoriaModel categoria;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLANO", referencedColumnName = "CDPLANO", nullable = false)
-    private PlanoModel plano;
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SLA", referencedColumnName = "CDSLA")
     private SLAModel sla;
 

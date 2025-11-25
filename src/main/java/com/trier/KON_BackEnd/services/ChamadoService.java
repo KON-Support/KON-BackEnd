@@ -11,7 +11,9 @@ import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,7 +41,7 @@ public class ChamadoService {
     private PlanoRepository planoRepository;
 
     @Transactional
-    public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) {
+    public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) throws IOException {
 
         UsuarioModel solicitante = usuarioRepository.findById(chamadoRequest.solicitante())
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(chamadoRequest.solicitante()));
@@ -55,14 +57,28 @@ public class ChamadoService {
                 .orElseThrow(() -> new SLANaoEncontradoException("SLA não encontrado"));
 
         ChamadoModel chamado = new ChamadoModel();
+
+        AnexoModel anexoModel = new AnexoModel();
+        anexoModel.setChamado(chamado);
+        anexoModel.setUsuario(solicitante);
+        anexoModel.setDtUpload(LocalDate.now());
+        anexoModel.setHrUpload(LocalTime.now());
+
+        MultipartFile arquivo = chamadoRequest.anexo();
+        anexoModel.setNmArquivo(arquivo.getOriginalFilename());
+        anexoModel.setDsTipoArquivo(arquivo.getContentType());
+        anexoModel.setArquivo(arquivo.getBytes());
+
+        anexoRepository.save(anexoModel);
+
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
         chamado.setStatus(chamadoRequest.status());
         chamado.setCategoria(categoria);
         chamado.setSolicitante(solicitante);
         chamado.setFlSlaViolado(false);
+        chamado.setAnexo(anexoModel);
         chamado.setDtCriacao(LocalDateTime.now());
-        chamado.setPlano(plano);
         chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResposta()));
 
         if (chamadoRequest.responsavel() != null) {
@@ -216,8 +232,7 @@ public class ChamadoService {
         if (chamado.getAnexo() != null) {
             anexoDTO = new ChamadoResponseDTO.AnexoSimplesDTO(
                     chamado.getAnexo().getCdAnexo(),
-                    chamado.getAnexo().getNmArquivo(),
-                    chamado.getAnexo().getDsTipoArquivo()
+                    chamado.getAnexo().getNmArquivo()
             );
         }
 

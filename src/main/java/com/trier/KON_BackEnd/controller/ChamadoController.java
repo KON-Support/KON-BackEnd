@@ -15,9 +15,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,7 +31,7 @@ public class ChamadoController {
     @Autowired
     private ChamadoService chamadoService;
 
-    @PostMapping("/abrir")
+    @PostMapping(value ="/abrir", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Abrir novo chamado", description = "Cria um novo chamado no sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Chamado criado com sucesso",
@@ -39,7 +41,7 @@ public class ChamadoController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
     })
     public ResponseEntity<ChamadoResponseDTO> abrirChamado(
-            @RequestBody @Valid ChamadoRequestDTO chamadoRequest) {
+            @RequestBody @ModelAttribute @Valid ChamadoRequestDTO chamadoRequest) throws IOException {
 
         var chamado = chamadoService.abrirChamado(chamadoRequest);
 
