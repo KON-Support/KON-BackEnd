@@ -45,12 +45,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 💥 LIBERAR TUDO
+                        .anyRequest().permitAll() //
                 )
 
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Se quiser manter o JWT funcionando, deixe a linha abaixo:
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

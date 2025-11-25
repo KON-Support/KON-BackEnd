@@ -33,17 +33,17 @@ SELECT 8, 48, TRUE, 1, 2 WHERE NOT EXISTS (SELECT 1 FROM TBSLA WHERE cd_plano = 
 INSERT INTO TBSLA (qt_horas_resposta, qt_horas_resolucao, fl_ativo, cd_plano, cd_categoria)
 SELECT 2, 8, TRUE, 2, 3 WHERE NOT EXISTS (SELECT 1 FROM TBSLA WHERE cd_plano = 2 AND cd_categoria = 3);
 
--- 5. USUARIOS (Baseado em ds_email que é UNIQUE)
+-- 5. USUARIOS (Baseado em ds_email que é UNIQUE comum= senha123 )
 INSERT INTO TBUSUARIO (nm_usuario, ds_senha, ds_email, nu_funcionario, plano_cd_plano, dt_criacao, dt_ultimo_acesso, fl_ativo)
 VALUES ('Usuario Comum', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'user@empresa.com', 1001, 1, NOW(), NOW(), TRUE)
     ON CONFLICT (ds_email) DO NOTHING;
 
 INSERT INTO TBUSUARIO (nm_usuario, ds_senha, ds_email, nu_funcionario, plano_cd_plano, dt_criacao, dt_ultimo_acesso, fl_ativo)
-VALUES ('Administrador', '$2a$10$W4C7D.NQn48LvEVtNnFQR.tECoDy81h.kaIy/T/oWAl7uvuTADBXG', 'admin@empresa.com', 1002, 2, NOW(), NOW(), TRUE)
+VALUES ('Administrador', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'admin@empresa.com', 1002, 2, NOW(), NOW(), TRUE)
     ON CONFLICT (ds_email) DO NOTHING;
 
 INSERT INTO TBUSUARIO (nm_usuario, ds_senha, ds_email, nu_funcionario, plano_cd_plano, dt_criacao, dt_ultimo_acesso, fl_ativo)
-VALUES ('Agente Suporte', '$2a$10$h5pfZchmzYH58iPkwUSDKuIRchyEjODeMhscOtYkYLi.aDlOzo/ny', 'agente@empresa.com', 1003, 2, NOW(), NOW(), TRUE)
+VALUES ('Agente Suporte', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'agente@empresa.com', 1003, 2, NOW(), NOW(), TRUE)
     ON CONFLICT (ds_email) DO NOTHING;
 
 -- 6. TB_USUARIO_ROLES (Evita duplicar associação de roles)
