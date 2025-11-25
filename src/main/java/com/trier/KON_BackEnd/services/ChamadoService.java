@@ -157,21 +157,6 @@ public class ChamadoService {
     }
 
     @Transactional
-    public ChamadoResponseDTO adicionarAnexo(Long cdChamado, Long cdAnexo) {
-
-        ChamadoModel chamado = chamadoRepository.findByIdWithRelations(cdChamado)
-                .orElseThrow(() -> new ChamadoNaoEncontradoException(cdChamado));
-
-        AnexoModel anexo = anexoRepository.findById(cdAnexo)
-                .orElseThrow(() -> new RuntimeException("Anexo não encontrado!"));
-
-        chamado.setAnexo(anexo);
-        chamadoRepository.save(chamado);
-
-        return convertToResponseDTO(chamado);
-    }
-
-    @Transactional
     public List<ChamadoResponseDTO> listarTodosChamados() {
         List<ChamadoModel> chamados = chamadoRepository.findAll();
         return chamados.stream().map(this::convertToResponseDTO).toList();

@@ -119,28 +119,6 @@ public class ChamadoController {
 
     }
 
-    @PutMapping("/adicionar/anexo/{cdChamado}")
-    @Operation(summary = "Adicionar anexo",
-            description = "Adiciona um anexo existente a um chamado")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Anexo adicionado com sucesso",
-                    content = @Content(schema = @Schema(implementation = ChamadoResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Chamado ou anexo não encontrado", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-    })
-    public ResponseEntity<ChamadoResponseDTO> adicionarAnexo(
-            @Parameter(description = "ID do chamado", required = true, example = "1")
-            @PathVariable Long cdChamado,
-
-            @Parameter(description = "ID do anexo", required = true, example = "1")
-            @RequestBody Long cdAnexo) {
-
-        var chamado = chamadoService.adicionarAnexo(cdChamado, cdAnexo);
-
-        return ResponseEntity.status(HttpStatus.OK).body(chamado);
-
-    }
-
     @GetMapping("/listar/todos")
     @Operation(summary = "Listar todos os chamados",
             description = "Retorna todos os chamados cadastrados no sistema")
