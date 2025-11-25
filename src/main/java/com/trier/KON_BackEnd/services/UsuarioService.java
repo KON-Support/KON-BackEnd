@@ -1,6 +1,5 @@
 package com.trier.KON_BackEnd.services;
 
-
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
@@ -11,6 +10,7 @@ import com.trier.KON_BackEnd.repository.PlanoRepository;
 import com.trier.KON_BackEnd.repository.RoleRepository;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +26,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
     private final PlanoRepository planoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
@@ -35,7 +36,7 @@ public class UsuarioService {
 
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNmUsuario(dto.nmUsuario());
-        usuario.setDsSenha(dto.dsSenha());
+        usuario.setDsSenha(passwordEncoder.encode(dto.dsSenha()));
         usuario.setDsEmail(dto.dsEmail());
         usuario.setFlAtivo(dto.flAtivo());
 
@@ -81,10 +82,9 @@ public class UsuarioService {
     }
 
     public List<UsuarioResponseDTO> listar() {
-        List<UsuarioModel> usuario = usuarioRepository.findAllByFlAtivo();
+        List<UsuarioModel> usuario = usuarioRepository.findAll();
         return usuario.stream().map(this::converterParaResponse).collect(Collectors.toList());
     }
-
 
     @Transactional
     public UsuarioResponseDTO desativar(Long cdUsuario) {
@@ -113,12 +113,14 @@ public class UsuarioService {
                 usuario.getCdUsuario(),
                 usuario.getNmUsuario(),
                 usuario.getDsEmail(),
-                usuario.getDsSenha(),
                 usuario.getDtCriacao(),
                 usuario.getDtUltimoAcesso(),
                 usuario.isFlAtivo(),
                 usuario.getNuFuncionario(),
-                usuario.getPlano()
+                usuario.getPlano(),
+                usuario.getRoleModel().stream()
+                        .map(RoleModel::getNmRole)
+                        .collect(Collectors.toSet())
         );
     }
 }
