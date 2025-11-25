@@ -57,12 +57,12 @@ public class ChamadoService {
                 .orElseThrow(() -> new SLANaoEncontradoException("SLA não encontrado"));
 
         ChamadoModel chamado = new ChamadoModel();
-
         chamado.setDsTitulo(chamadoRequest.dsTitulo());
         chamado.setDsDescricao(chamadoRequest.dsDescricao());
         chamado.setStatus(chamadoRequest.status());
         chamado.setCategoria(categoria);
         chamado.setSolicitante(solicitante);
+        chamado.setSla(sla);
         chamado.setFlSlaViolado(false);
         chamado.setDtCriacao(LocalDateTime.now());
         chamado.setDtVencimento(chamado.getDtCriacao().plusHours(sla.getQtHorasResposta()));
