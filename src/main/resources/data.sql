@@ -34,11 +34,11 @@ VALUES ('Usuario Comum', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28
     ON CONFLICT (ds_email) DO NOTHING;
 
 INSERT INTO TBUSUARIO (nm_usuario, ds_senha, ds_email, nu_funcionario, plano_cd_plano, dt_criacao, dt_ultimo_acesso, fl_ativo)
-VALUES ('Administrador', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'admin@empresa.com', 1002, 2, NOW(), NOW(), TRUE)
+VALUES ('Administrador', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'admin@empresa.com', null, 2, NOW(), NOW(), TRUE)
     ON CONFLICT (ds_email) DO NOTHING;
 
 INSERT INTO TBUSUARIO (nm_usuario, ds_senha, ds_email, nu_funcionario, plano_cd_plano, dt_criacao, dt_ultimo_acesso, fl_ativo)
-VALUES ('Agente Suporte', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'agente@empresa.com', 1003, 2, NOW(), NOW(), TRUE)
+VALUES ('Agente Suporte', '$2a$10$eL1SvZLbqfaacrZzJLSNTu3pdmuxFD6St/P5RPr0oZfuG28l2RbIW', 'agente@empresa.com', null, 2, NOW(), NOW(), TRUE)
     ON CONFLICT (ds_email) DO NOTHING;
 
 INSERT INTO TBUSUARIOROLES (usuario_id, role_id) SELECT 1, 1 WHERE NOT EXISTS (SELECT 1 FROM TBUSUARIOROLES WHERE usuario_id = 1 AND role_id = 1);
