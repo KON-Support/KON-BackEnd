@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/chamado")
 @Tag(name = "Chamado", description = "Gerenciamento de chamados")
 public class ChamadoController {
