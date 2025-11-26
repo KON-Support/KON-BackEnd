@@ -31,12 +31,10 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(service.listar());
     }
 
-
-
-
-
-
-
-
+    @DeleteMapping("/deletar/{cdRole}")
+    public ResponseEntity<Void> deletarRole(@PathVariable Long cdRole) {
+        service.deletar(cdRole);return ResponseEntity.noContent().build();
+    }
 
 }
+
