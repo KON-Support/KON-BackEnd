@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sla")
 @Tag(name = "SLA", description = "Capacidade de gerenciamento dos SLA")
-@CrossOrigin(origins = "*")
 public class SLAController {
 
     @Autowired
