@@ -1,7 +1,5 @@
 package com.trier.KON_BackEnd.dto.response;
 
-import java.time.LocalDateTime;
-
 public record CategoriaResponseDTO(
 
         Long cdCategoria,

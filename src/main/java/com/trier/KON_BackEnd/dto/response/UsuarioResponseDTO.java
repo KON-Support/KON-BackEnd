@@ -3,7 +3,6 @@ package com.trier.KON_BackEnd.dto.response;
 import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.RoleModel;
 import com.trier.KON_BackEnd.model.UsuarioModel;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;

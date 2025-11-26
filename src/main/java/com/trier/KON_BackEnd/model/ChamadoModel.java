@@ -3,7 +3,6 @@ package com.trier.KON_BackEnd.model;
 import com.trier.KON_BackEnd.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
