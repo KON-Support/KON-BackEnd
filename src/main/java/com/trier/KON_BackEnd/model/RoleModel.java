@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "TBROLE")
 public class RoleModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdRole;

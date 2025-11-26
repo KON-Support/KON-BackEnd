@@ -5,7 +5,6 @@ import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
 import com.trier.KON_BackEnd.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

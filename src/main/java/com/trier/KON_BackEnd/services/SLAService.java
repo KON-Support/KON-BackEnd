@@ -4,20 +4,12 @@ import com.trier.KON_BackEnd.dto.sla.SLARequestDto;
 import com.trier.KON_BackEnd.dto.sla.SLAResponseListar;
 import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
 import com.trier.KON_BackEnd.exception.SLANaoEncontradoException;
-import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.*;
 import com.trier.KON_BackEnd.repository.*;
 import lombok.AllArgsConstructor;
-import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor

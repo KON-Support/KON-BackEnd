@@ -1,11 +1,7 @@
 package com.trier.KON_BackEnd.controller;
 
-
 import com.trier.KON_BackEnd.dto.request.PlanoRequestDTO;
-import com.trier.KON_BackEnd.dto.request.RoleRequestDTO;
-import com.trier.KON_BackEnd.dto.response.AnexoResponseDTO;
 import com.trier.KON_BackEnd.dto.response.PlanoResponseDTO;
-import com.trier.KON_BackEnd.dto.response.RoleResponseDTO;
 import com.trier.KON_BackEnd.services.PlanoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

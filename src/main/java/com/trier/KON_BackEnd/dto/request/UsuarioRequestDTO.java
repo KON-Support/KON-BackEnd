@@ -1,8 +1,6 @@
 package com.trier.KON_BackEnd.dto.request;
 
 import jakarta.validation.constraints.*;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record UsuarioRequestDTO (
