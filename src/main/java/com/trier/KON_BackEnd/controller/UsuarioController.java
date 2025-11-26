@@ -52,7 +52,7 @@ public class UsuarioController {
 
     }
 
-    @PatchMapping("/desativar/{cdUsuario}")
+    @PutMapping("/desativar/{cdUsuario}")
     @Operation(summary = "Desativar usuário", description = "Desativa um usuário existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuário desativado com sucesso"),
@@ -64,7 +64,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(desativar);
     }
 
-    @PatchMapping("/reativar/{cdUsuario}")
+    @PutMapping("/reativar/{cdUsuario}")
     @Operation(summary = "Reativar usuário", description = "Reativa um usuário previamente desativado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário reativado com sucesso",
