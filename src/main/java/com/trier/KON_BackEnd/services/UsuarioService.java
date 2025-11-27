@@ -140,6 +140,16 @@ public class UsuarioService {
         return converterParaResponse(usuario);
     }
 
+    @Transactional
+    public void deletar(Long cdUsuario) {
+
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuarioRepository.delete(usuario);
+
+    }
+
     private UsuarioResponseDTO converterParaResponse(UsuarioModel usuario) {
         return new UsuarioResponseDTO(
                 usuario.getCdUsuario(),
