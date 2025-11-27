@@ -114,6 +114,8 @@ public class UsuarioService {
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
 
         usuario.setNmUsuario(dto.nmUsuario());
+        usuario.setDsEmail(dto.dsEmail());
+        usuario.setNuFuncionario(dto.nuFuncionario());
 
         if(dto.dsSenha() != null && !dto.dsSenha().isEmpty()) {
             usuario.setDsSenha(passwordEncoder.encode(dto.dsSenha()));
@@ -121,8 +123,18 @@ public class UsuarioService {
             usuario.setDsSenha(usuario.getDsSenha());
         }
 
-        usuario.setDsEmail(dto.dsEmail());
-        usuario.setNuFuncionario(dto.nuFuncionario());
+        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosAsc();
+
+        for (PlanoModel plano : planos) {
+            if(plano.getLimiteUsuarios() == null) {
+                usuario.setPlano(plano);
+                break;
+            } else if (usuario.getNuFuncionario() <= plano.getLimiteUsuarios()) {
+                usuario.setPlano(plano);
+                break;
+            }
+        }
+
         usuarioRepository.save(usuario);
 
         return converterParaResponse(usuario);
