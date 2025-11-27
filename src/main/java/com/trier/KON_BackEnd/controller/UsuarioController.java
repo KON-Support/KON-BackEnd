@@ -92,3 +92,19 @@ public class UsuarioController {
     }
 
 }
+    @DeleteMapping("/deletar/{cdUsuario}")
+    @Operation(summary = "Deletar usuário", description = "Deleta por completa o usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<Void> deletar(@PathVariable Long cdUsuario) {
+
+        service.deletar(cdUsuario);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+}
