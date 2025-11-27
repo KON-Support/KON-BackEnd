@@ -1,7 +1,6 @@
 package com.trier.KON_BackEnd.config;
 
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
-import com.trier.KON_BackEnd.services.OAuth2Service;
 import com.trier.KON_BackEnd.utils.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     private final UsuarioRepository usuarioRepository;
-    private final OAuth2Service oAuth2Service;
 
     @Value("${frontend.url}")
     private String frontendUrl;
