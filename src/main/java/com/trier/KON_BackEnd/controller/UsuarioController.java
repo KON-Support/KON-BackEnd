@@ -62,7 +62,7 @@ public class UsuarioController {
     })
     public ResponseEntity<UsuarioResponseDTO> desativar(@PathVariable Long cdUsuario) {
         var desativar = service.desativar(cdUsuario);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(desativar);
+        return ResponseEntity.status(HttpStatus.OK).body(desativar);
     }
 
     @PutMapping("/reativar/{cdUsuario}")
