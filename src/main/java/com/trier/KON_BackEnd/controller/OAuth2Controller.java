@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -35,6 +37,8 @@ public class OAuth2Controller {
             HttpServletResponse response) throws IOException {
 
         try {
+            log.info("OAuth2 login success para: {}", (Object) oAuth2User.getAttribute("email"));
+
             AuthResponseDTO authResponse = oAuth2Service.processOAuthPostLogin(oAuth2User);
 
             String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
@@ -45,8 +49,11 @@ public class OAuth2Controller {
                     .build()
                     .toUriString();
 
+            log.info("Redirecionando para: {}", redirectUrl);
             response.sendRedirect(redirectUrl);
+
         } catch (Exception e) {
+            log.error("Erro no OAuth2 login: ", e);
             String errorUrl = frontendUrl + "/oauth2/redirect?error=" +
                     URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
             response.sendRedirect(errorUrl);
@@ -57,6 +64,7 @@ public class OAuth2Controller {
     @Operation(summary = "Callback de falha OAuth2",
             description = "Trata erros durante o processo de autenticação OAuth2")
     public void oauth2LoginFailure(HttpServletResponse response) throws IOException {
+        log.error("OAuth2 login falhou");
         String errorUrl = frontendUrl + "/oauth2/redirect?error=authentication_failed";
         response.sendRedirect(errorUrl);
     }
