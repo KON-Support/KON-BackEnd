@@ -50,7 +50,6 @@ public class UsuarioController {
     })
     public ResponseEntity<List<UsuarioResponseDTO>> buscarTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(service.listar());
-
     }
 
     @PutMapping("/desativar/{cdUsuario}")

@@ -29,7 +29,7 @@ public class UsuarioModel {
     private String dsEmail;
 
     @Column(nullable = false)
-    private int nuFuncionario;
+    private Integer nuFuncionario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private PlanoModel plano;

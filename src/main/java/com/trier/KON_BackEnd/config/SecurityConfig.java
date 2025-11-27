@@ -26,14 +26,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +43,7 @@ public class SecurityConfig {
     @Autowired
     private OAuth2Service oAuth2Service;
 
-    @Value("${frontend.url}")
+    @Value("${frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
     @Bean
@@ -63,14 +59,17 @@ public class SecurityConfig {
         JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(userDetailsService, jwtUtil);
 
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/oauth2/**").permitAll()
-                        .requestMatchers("/login/oauth2/code/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/oauth2/**",
+                                "/oauth2/**",
+                                "/login/oauth2/code/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -89,9 +88,25 @@ public class SecurityConfig {
 
                                 response.sendRedirect(redirectUrl);
                             } catch (Exception e) {
-                                String errorUrl = frontendUrl + "/oauth2/redirect?error=" +
-                                        URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
-                                response.sendRedirect(errorUrl);
+                                if ("USUARIO_SEM_NU_FUNCIONARIO".equals(e.getMessage()) ||
+                                        "USUARIO_NAO_ENCONTRADO".equals(e.getMessage())) {
+
+                                    OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+                                    String email = oAuth2User.getAttribute("email");
+                                    String name = oAuth2User.getAttribute("name");
+
+                                    String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
+                                            .queryParam("tempEmail", URLEncoder.encode(email, StandardCharsets.UTF_8))
+                                            .queryParam("tempName", URLEncoder.encode(name, StandardCharsets.UTF_8))
+                                            .build()
+                                            .toUriString();
+
+                                    response.sendRedirect(redirectUrl);
+                                } else {
+                                    String errorUrl = frontendUrl + "/oauth2/redirect?error=" +
+                                            URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+                                    response.sendRedirect(errorUrl);
+                                }
                             }
                         })
                         .failureHandler((request, response, exception) -> {
@@ -103,20 +118,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 
     @Bean
