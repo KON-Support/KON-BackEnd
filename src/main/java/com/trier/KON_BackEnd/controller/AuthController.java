@@ -51,6 +51,7 @@ public class AuthController {
             UsuarioLoginDTO usuarioDTO = new UsuarioLoginDTO(
                     usuario.getCdUsuario(),
                     usuario.getNmUsuario(),
+                    usuario.getNuFuncionario(),
                     usuario.getDsEmail(),
                     usuario.getRoleModel()
                             .stream()

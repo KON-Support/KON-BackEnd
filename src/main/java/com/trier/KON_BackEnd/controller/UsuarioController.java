@@ -50,7 +50,6 @@ public class UsuarioController {
     })
     public ResponseEntity<List<UsuarioResponseDTO>> buscarTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(service.listar());
-
     }
 
     @PutMapping("/desativar/{cdUsuario}")
@@ -92,6 +91,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(atualizado);
     }
 
+}
     @DeleteMapping("/deletar/{cdUsuario}")
     @Operation(summary = "Deletar usuário", description = "Deleta por completa o usuário")
     @ApiResponses(value = {
