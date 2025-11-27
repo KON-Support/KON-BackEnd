@@ -1,5 +1,6 @@
 package com.trier.KON_BackEnd.services;
 
+import com.trier.KON_BackEnd.dto.request.AtualizarUsuarioDTO;
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
@@ -103,6 +104,25 @@ public class UsuarioService {
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
 
         usuario.setFlAtivo(true);
+        usuarioRepository.save(usuario);
+
+        return converterParaResponse(usuario);
+    }
+
+    public UsuarioResponseDTO atualizar(AtualizarUsuarioDTO dto, Long cdUsuario) {
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
+
+        usuario.setNmUsuario(dto.nmUsuario());
+
+        if(dto.dsSenha() != null && !dto.dsSenha().isEmpty()) {
+            usuario.setDsSenha(passwordEncoder.encode(dto.dsSenha()));
+        } else {
+            usuario.setDsSenha(usuario.getDsSenha());
+        }
+
+        usuario.setDsEmail(dto.dsEmail());
+        usuario.setNuFuncionario(dto.nuFuncionario());
         usuarioRepository.save(usuario);
 
         return converterParaResponse(usuario);

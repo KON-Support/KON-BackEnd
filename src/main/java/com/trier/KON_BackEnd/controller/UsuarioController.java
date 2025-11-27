@@ -1,5 +1,6 @@
 package com.trier.KON_BackEnd.controller;
 
+import com.trier.KON_BackEnd.dto.request.AtualizarUsuarioDTO;
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.CategoriaResponseDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
@@ -75,6 +76,20 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> reativar(@PathVariable @Valid Long cdUsuario) {
         var reativar = service.reativar(cdUsuario);
         return ResponseEntity.status(HttpStatus.OK).body(reativar);
+    }
+
+    @PutMapping("/atualizar/{cdUsuario}")
+    @Operation(summary = "Atualizar usuário", description = "Atualiza os dados de um usuário existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<UsuarioResponseDTO> atualizar(@PathVariable Long cdUsuario,
+                                                        @Valid @RequestBody AtualizarUsuarioDTO dto) {
+        var atualizado = service.atualizar(dto, cdUsuario);
+        return ResponseEntity.status(HttpStatus.OK).body(atualizado);
     }
 
 }
