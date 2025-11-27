@@ -4,7 +4,9 @@ import com.trier.KON_BackEnd.dto.response.AuthResponseDTO;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import com.trier.KON_BackEnd.services.OAuth2Service;
 import com.trier.KON_BackEnd.utils.JwtAuthFilter;
-import lombok.RequiredArgsConstructor;
+import com.trier.KON_BackEnd.utils.JwtUtil;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,17 +39,29 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UsuarioRepository usuarioRepository;
-    private final OAuth2Service oAuth2Service;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private OAuth2Service oAuth2Service;
 
     @Value("${frontend.url}")
     private String frontendUrl;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+    public JwtUtil jwtUtil() {
+        return new JwtUtil();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService,
+                                           ObjectProvider<JwtUtil> jwtUtilProvider) throws Exception {
+
+        JwtUtil jwtUtil = jwtUtilProvider.getIfAvailable();
+        JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(userDetailsService, jwtUtil);
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -55,6 +69,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
