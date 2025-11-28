@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -37,6 +38,9 @@ public class ChamadoService {
 
     @Autowired
     private PlanoRepository planoRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional
     public ChamadoResponseDTO abrirChamado(ChamadoRequestDTO chamadoRequest) throws IOException {
@@ -72,6 +76,25 @@ public class ChamadoService {
         }
 
         chamadoRepository.save(chamado);
+        try {
+            StringBuilder emailHtml = new StringBuilder();
+            emailHtml.append("<html><body>");
+            emailHtml.append("<meta charset='UTF-8'>");
+            emailHtml.append("<h2>Chamado Criado com Sucesso!</h2>");
+            emailHtml.append("<p><strong>Título:</strong> ").append(chamado.getDsTitulo()).append("</p>");
+            emailHtml.append("<p><strong>Descrição:</strong> ").append(chamado.getDsDescricao()).append("</p>");
+            emailHtml.append("<p>Estamos processando sua solicitação.</p>");
+            emailHtml.append("<a href='https://konsupport.profrenansenai.com.br/login'>Acesse aqui<a>");
+            emailHtml.append("</body></html>");
+
+            emailService.enviarEmail(
+                    chamado.getSolicitante().getDsEmail(),
+                    "Chamado Criado: " + chamado.getDsTitulo(),
+                    emailHtml.toString()
+            );
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao enviar email: " + e.getMessage());
+        }
 
         MultipartFile arquivo = chamadoRequest.anexo();
         if (arquivo != null && !arquivo.isEmpty()) {
@@ -88,6 +111,26 @@ public class ChamadoService {
 
             chamado.setAnexo(anexoModel);
             chamadoRepository.save(chamado);
+
+            try {
+                StringBuilder emailHtml = new StringBuilder();
+                emailHtml.append("<html><body>");
+                emailHtml.append("<meta charset='UTF-8'>");
+                emailHtml.append("<h2>Chamado Criado com Sucesso!</h2>");
+                emailHtml.append("<p><strong>Título:</strong> ").append(chamado.getDsTitulo()).append("</p>");
+                emailHtml.append("<p><strong>Descrição:</strong> ").append(chamado.getDsDescricao()).append("</p>");
+                emailHtml.append("<p>Estamos processando sua solicitação.</p>");
+                emailHtml.append("<a href='https://konsupport.profrenansenai.com.br/login'>Acesse aqui<a>");
+                emailHtml.append("</body></html>");
+
+                emailService.enviarEmail(
+                        chamado.getSolicitante().getDsEmail(),
+                        "Chamado Criado: " + chamado.getDsTitulo(),
+                        emailHtml.toString()
+                );
+            } catch (Exception e) {
+                System.out.println("❌ Erro ao enviar email: " + e.getMessage());
+            }
         }
 
         return convertToResponseDTO(chamado);
@@ -124,6 +167,24 @@ public class ChamadoService {
         chamado.setStatus(Status.EM_ANDAMENTO);
         chamadoRepository.save(chamado);
 
+        try {
+            StringBuilder emailHtml = new StringBuilder();
+            emailHtml.append("<html><body>");
+            emailHtml.append("<meta charset='UTF-8'>");
+            emailHtml.append("<h2>Seu chamado foi aceito por ").append(chamado.getResponsavel().getNmUsuario()).append("</h2>");
+            emailHtml.append("<p><strong>Título:</strong> ").append(chamado.getDsTitulo()).append("</p>");
+            emailHtml.append("<p><strong>Descrição:</strong> ").append(chamado.getDsDescricao()).append("</p>");
+            emailHtml.append("<a href='https://konsupport.profrenansenai.com.br/login'>Acesse aqui</a>");
+            emailHtml.append("</body></html>");
+
+            emailService.enviarEmail(
+                    chamado.getSolicitante().getDsEmail(),
+                    "Chamado Criado: " + chamado.getDsTitulo(),
+                    emailHtml.toString()
+            );
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao enviar email: " + e.getMessage());
+        }
         return convertToResponseDTO(chamado);
     }
 
@@ -170,7 +231,23 @@ public class ChamadoService {
         }
 
         chamadoRepository.save(chamado);
+        try {
+            StringBuilder emailHtml = new StringBuilder();
+            emailHtml.append("<html><body>");
+            emailHtml.append("<meta charset='UTF-8'>");
+            emailHtml.append("<h2>Seu chamado encerrado</h2>");
+            emailHtml.append("<p><strong>Título:</strong> ").append(chamado.getDsTitulo()).append("</p>");
+            emailHtml.append("<p>Obrigado até a próxima.</p>");
+            emailHtml.append("</body></html>");
 
+            emailService.enviarEmail(
+                    chamado.getSolicitante().getDsEmail(),
+                    "Chamado Criado: " + chamado.getDsTitulo(),
+                    emailHtml.toString()
+            );
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao enviar email: " + e.getMessage());
+        }
         return convertToResponseDTO(chamado);
     }
 
@@ -255,6 +332,11 @@ public class ChamadoService {
             );
         }
 
+        boolean flSlaMetade = chegouMetadeDoSLA(
+                chamado.getDtCriacao(),
+                chamado.getDtVencimento()
+        );
+
         return new ChamadoResponseDTO(
                 chamado.getCdChamado(),
                 chamado.getDsTitulo(),
@@ -268,7 +350,18 @@ public class ChamadoService {
                 chamado.getDtCriacao(),
                 chamado.getDtFechamento(),
                 chamado.getDtVencimento(),
-                chamado.getFlSlaViolado()
+                chamado.getFlSlaViolado(),
+                flSlaMetade
         );
+    }
+
+    public boolean chegouMetadeDoSLA(LocalDateTime dtCriacao, LocalDateTime dtVencimento) {
+
+        Duration total = Duration.between(dtCriacao, dtVencimento);
+        Duration decorrido = Duration.between(dtCriacao, LocalDateTime.now());
+
+        Duration metade = total.dividedBy(2);
+
+        return decorrido.compareTo(metade) >= 0;
     }
 }
