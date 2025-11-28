@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +14,7 @@ import java.util.Set;
 @Setter
 @Table(name = "TBUSUARIO")
 public class UsuarioModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdUsuario;
@@ -29,7 +29,7 @@ public class UsuarioModel {
     private String dsEmail;
 
     @Column(nullable = false)
-    private int nuFuncionario;
+    private Integer nuFuncionario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private PlanoModel plano;

@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "TBPLANO")
 public class PlanoModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdPlano;

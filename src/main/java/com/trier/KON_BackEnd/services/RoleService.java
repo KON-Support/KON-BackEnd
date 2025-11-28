@@ -1,6 +1,5 @@
 package com.trier.KON_BackEnd.services;
 
-
 import com.trier.KON_BackEnd.dto.request.RoleRequestDTO;
 import com.trier.KON_BackEnd.dto.response.RoleResponseDTO;
 import com.trier.KON_BackEnd.model.RoleModel;
@@ -9,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service

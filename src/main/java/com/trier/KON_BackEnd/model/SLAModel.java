@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -16,7 +13,7 @@ import java.time.LocalTime;
 @Table(name = "TBSLA")
 public class SLAModel {
 
-    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdSLA;
 
     private Integer qtHorasResposta;

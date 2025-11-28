@@ -3,7 +3,6 @@ package com.trier.KON_BackEnd.controller;
 import com.trier.KON_BackEnd.dto.sla.SLARequestDto;
 import com.trier.KON_BackEnd.dto.sla.SLAResponseListar;
 import com.trier.KON_BackEnd.dto.sla.response.SLAResponseDto;
-import com.trier.KON_BackEnd.model.SLAModel;
 import com.trier.KON_BackEnd.repository.SLARepository;
 import com.trier.KON_BackEnd.services.SLAService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sla")
 @Tag(name = "SLA", description = "Capacidade de gerenciamento dos SLA")
-@CrossOrigin(origins = "*")
 public class SLAController {
 
     @Autowired

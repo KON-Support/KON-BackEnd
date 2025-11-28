@@ -3,7 +3,6 @@ package com.trier.KON_BackEnd.model;
 import com.trier.KON_BackEnd.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -44,11 +43,6 @@ public class ChamadoModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORIA", referencedColumnName = "CDCATEGORIA", nullable = false)
     private CategoriaModel categoria;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLANO", referencedColumnName = "CDPLANO", nullable = false)
-    private PlanoModel plano;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SLA", referencedColumnName = "CDSLA")

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/comentario")
 @Tag(name = "Comentario", description = "Gerenciamento de comentários")
 public class ComentarioController {

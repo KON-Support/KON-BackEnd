@@ -1,9 +1,7 @@
 package com.trier.KON_BackEnd.dto.response;
 
 import com.trier.KON_BackEnd.enums.Status;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public record ChamadoResponseDTO(
 
@@ -33,8 +31,7 @@ public record ChamadoResponseDTO(
     public record AnexoSimplesDTO(
 
             Long cdAnexo,
-            String nmArquivo,
-            String dsTipoArquivo
+            String nmArquivo
 
     ) {}
 

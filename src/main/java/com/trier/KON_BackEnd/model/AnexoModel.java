@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -18,6 +17,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "TBANEXO")
 public class AnexoModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cdAnexo;

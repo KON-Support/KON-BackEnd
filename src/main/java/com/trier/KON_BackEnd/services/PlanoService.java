@@ -2,11 +2,9 @@ package com.trier.KON_BackEnd.services;
 
 import com.trier.KON_BackEnd.dto.request.PlanoRequestDTO;
 import com.trier.KON_BackEnd.dto.response.PlanoResponseDTO;
-import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
 import com.trier.KON_BackEnd.exception.NenhumPlanoEncontradoException;
 import com.trier.KON_BackEnd.exception.PlanoNaoEncontradoException;
 import com.trier.KON_BackEnd.model.PlanoModel;
-import com.trier.KON_BackEnd.model.UsuarioModel;
 import com.trier.KON_BackEnd.repository.PlanoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

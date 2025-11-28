@@ -1,6 +1,6 @@
 package com.trier.KON_BackEnd.services;
 
-
+import com.trier.KON_BackEnd.dto.request.AtualizarUsuarioDTO;
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
@@ -11,6 +11,7 @@ import com.trier.KON_BackEnd.repository.PlanoRepository;
 import com.trier.KON_BackEnd.repository.RoleRepository;
 import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
     private final PlanoRepository planoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
@@ -35,7 +37,7 @@ public class UsuarioService {
 
         UsuarioModel usuario = new UsuarioModel();
         usuario.setNmUsuario(dto.nmUsuario());
-        usuario.setDsSenha(dto.dsSenha());
+        usuario.setDsSenha(passwordEncoder.encode(dto.dsSenha()));
         usuario.setDsEmail(dto.dsEmail());
         usuario.setFlAtivo(dto.flAtivo());
 
@@ -81,10 +83,9 @@ public class UsuarioService {
     }
 
     public List<UsuarioResponseDTO> listar() {
-        List<UsuarioModel> usuario = usuarioRepository.findAllByFlAtivo();
+        List<UsuarioModel> usuario = usuarioRepository.findAll();
         return usuario.stream().map(this::converterParaResponse).collect(Collectors.toList());
     }
-
 
     @Transactional
     public UsuarioResponseDTO desativar(Long cdUsuario) {
@@ -108,17 +109,60 @@ public class UsuarioService {
         return converterParaResponse(usuario);
     }
 
+    public UsuarioResponseDTO atualizar(AtualizarUsuarioDTO dto, Long cdUsuario) {
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
+
+        usuario.setNmUsuario(dto.nmUsuario());
+        usuario.setDsEmail(dto.dsEmail());
+        usuario.setNuFuncionario(dto.nuFuncionario());
+
+        if(dto.dsSenha() != null && !dto.dsSenha().isEmpty()) {
+            usuario.setDsSenha(passwordEncoder.encode(dto.dsSenha()));
+        } else {
+            usuario.setDsSenha(usuario.getDsSenha());
+        }
+
+        List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosAsc();
+
+        for (PlanoModel plano : planos) {
+            if(plano.getLimiteUsuarios() == null) {
+                usuario.setPlano(plano);
+                break;
+            } else if (usuario.getNuFuncionario() <= plano.getLimiteUsuarios()) {
+                usuario.setPlano(plano);
+                break;
+            }
+        }
+
+        usuarioRepository.save(usuario);
+
+        return converterParaResponse(usuario);
+    }
+
+    @Transactional
+    public void deletar(Long cdUsuario) {
+
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuarioRepository.delete(usuario);
+
+    }
+
     private UsuarioResponseDTO converterParaResponse(UsuarioModel usuario) {
         return new UsuarioResponseDTO(
                 usuario.getCdUsuario(),
                 usuario.getNmUsuario(),
                 usuario.getDsEmail(),
-                usuario.getDsSenha(),
                 usuario.getDtCriacao(),
                 usuario.getDtUltimoAcesso(),
                 usuario.isFlAtivo(),
                 usuario.getNuFuncionario(),
-                usuario.getPlano()
+                usuario.getPlano(),
+                usuario.getRoleModel().stream()
+                        .map(RoleModel::getNmRole)
+                        .collect(Collectors.toSet())
         );
     }
 }
