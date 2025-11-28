@@ -74,6 +74,18 @@ public class OAuth2Service {
         if (usuarioExistente.isPresent()) {
             usuario = usuarioExistente.get();
             usuario.setNuFuncionario(nuFuncionario);
+
+            if (usuario.getRoleModel().isEmpty()) {
+                Set<RoleModel> roles = new HashSet<>();
+                RoleModel roleUser = roleRepository.findByNmRole("ROLE_USER")
+                        .orElseGet(() -> {
+                            RoleModel newRole = new RoleModel();
+                            newRole.setNmRole("ROLE_USER");
+                            return roleRepository.save(newRole);
+                        });
+                roles.add(roleUser);
+                usuario.setRoleModel(roles);
+            }
         } else {
             usuario = new UsuarioModel();
             usuario.setDsEmail(email);
@@ -93,7 +105,17 @@ public class OAuth2Service {
             usuario.setRoleModel(roles);
 
             List<PlanoModel> planos = planoRepository.findAllByOrderByLimiteUsuariosAsc();
-            if (!planos.isEmpty()) {
+            for (PlanoModel plano : planos) {
+                if (plano.getLimiteUsuarios() == null) {
+                    usuario.setPlano(plano);
+                    break;
+                } else if (nuFuncionario <= plano.getLimiteUsuarios()) {
+                    usuario.setPlano(plano);
+                    break;
+                }
+            }
+
+            if (usuario.getPlano() == null && !planos.isEmpty()) {
                 usuario.setPlano(planos.get(0));
             }
         }
