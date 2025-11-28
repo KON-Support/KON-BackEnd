@@ -17,7 +17,9 @@ public record ChamadoResponseDTO(
         LocalDateTime dtCriacao,
         LocalDateTime dtFechamento,
         LocalDateTime dtVencimento,
-        Boolean flSlaViolado
+        Boolean flSlaViolado,
+        Boolean flSlaMetade
+
 
 ) {
 
@@ -49,4 +51,5 @@ public record ChamadoResponseDTO(
             Integer qtHorasResolucao
 
     ) {}
+
 }

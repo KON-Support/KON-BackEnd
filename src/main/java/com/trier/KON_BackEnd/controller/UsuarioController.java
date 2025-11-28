@@ -91,7 +91,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(atualizado);
     }
 
-}
     @DeleteMapping("/deletar/{cdUsuario}")
     @Operation(summary = "Deletar usuário", description = "Deleta por completa o usuário")
     @ApiResponses(value = {
