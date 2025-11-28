@@ -21,7 +21,7 @@ public class ChamadoModel {
     @Column(name = "DSTITULO", nullable = false)
     private String dsTitulo;
 
-    @Column(name = "DSDESCRICAO", nullable = false)
+    @Column(length = 300, name = "DSDESCRICAO", nullable = false)
     private String dsDescricao;
 
     @Enumerated(EnumType.STRING)
