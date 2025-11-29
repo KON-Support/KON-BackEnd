@@ -51,6 +51,19 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(service.listar());
     }
 
+    @GetMapping("/buscar/{cdUsuario}")
+    @Operation(summary = "Buscar usuário por ID", description = "Retorna um usuário específico pelo seu ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário encontrado com sucesso",
+                    content = @Content(schema = @Schema(implementation = UsuarioResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long cdUsuario) {
+        UsuarioResponseDTO usuario = service.buscarPorId(cdUsuario);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
+
     @PutMapping("/desativar/{cdUsuario}")
     @Operation(summary = "Desativar usuário", description = "Desativa um usuário existente")
     @ApiResponses(value = {

@@ -141,6 +141,14 @@ public class UsuarioService {
     }
 
     @Transactional
+    public UsuarioResponseDTO buscarPorId(Long cdUsuario) {
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
+
+        return converterParaResponse(usuario);
+    }
+
+    @Transactional
     public void deletar(Long cdUsuario) {
 
         UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
