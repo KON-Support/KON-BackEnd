@@ -1,10 +1,10 @@
 # KON Support - Sistema de Gerenciamento de Chamados
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 KON Support é uma API REST completa para gerenciamento de chamados de suporte, desenvolvida com Spring Boot. O sistema oferece funcionalidades como abertura de chamados, atribuição de responsáveis, gestão de SLA, sistema de comentários com anexos, e autenticação via OAuth2 (Google) e JWT.
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Java 21**
 - **Spring Boot 3.5.6**
@@ -15,7 +15,7 @@ KON Support é uma API REST completa para gerenciamento de chamados de suporte, 
 - **JavaMailSender** (Envio de e-mails)
 - **Lombok** (Redução de boilerplate)
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 O projeto segue uma arquitetura em camadas:
 
@@ -30,15 +30,15 @@ O projeto segue uma arquitetura em camadas:
 └── utils/          # Utilitários (JWT, etc)
 ```
 
-## 📦 Principais Funcionalidades
+## Principais Funcionalidades
 
-### 🔐 Autenticação
+### Autenticação
 - Login tradicional (email/senha)
 - OAuth2 com Google
 - Geração e validação de tokens JWT
 - Sistema de roles (USER, ADMIN, AGENTE)
 
-### 🎫 Gestão de Chamados
+### Gestão de Chamados
 - Abertura de chamados com anexos
 - Atribuição automática de SLA baseado em categoria e plano
 - Atribuição de responsáveis
@@ -46,28 +46,28 @@ O projeto segue uma arquitetura em camadas:
 - Verificação de violação de SLA
 - Notificações por email
 
-### 💬 Sistema de Comentários
+### Sistema de Comentários
 - Comentários em chamados
 - Anexos em comentários
 - Histórico completo de interações
 
-### 📊 SLA (Service Level Agreement)
+### SLA (Service Level Agreement)
 - Criação de SLAs por categoria + plano
 - Cálculo automático de prazos (resposta e resolução)
 - Alertas de SLA em risco (50% do prazo)
 - Marcação de SLAs violados
 
-### 👥 Gestão de Usuários
+### Gestão de Usuários
 - Cadastro com atribuição automática de plano
 - Ativação/desativação de usuários
 - Gestão de roles e permissões
 
-### 📁 Anexos
+### Anexos
 - Upload/download de arquivos
 - Armazenamento em banco de dados
 - Suporte a múltiplos tipos de arquivo
 
-## 🔧 Como Rodar o Projeto
+##  Como Rodar o Projeto
 
 ### Pré-requisitos
 
@@ -130,7 +130,7 @@ mvn spring-boot:run
 - **Swagger UI:** http://localhost:8089/swagger-ui/index.html
 - **Docs API:** http://localhost:8089/v3/api-docs
 
-## 📚 Endpoints Principais
+## Endpoints Principais
 
 ### Autenticação
 - `POST /api/auth/login` - Login tradicional
@@ -151,7 +151,7 @@ mvn spring-boot:run
 - `POST /api/v1/anexo/upload` - Upload de arquivo
 - `GET /api/v1/anexo/baixar/{id}` - Download de arquivo
 
-## 🗄️ Dados Iniciais
+## Dados Iniciais
 
 O sistema cria automaticamente:
 
@@ -174,7 +174,7 @@ O sistema cria automaticamente:
 - **User:** user@empresa.com / senha: Senha123@
 - **Admin:** admin@empresa.com / senha: Senha123@
 
-## 🔒 Segurança
+## Segurança
 
 - Autenticação JWT com expiração de 1 hora
 - Criptografia de senhas com BCrypt
@@ -182,7 +182,7 @@ O sistema cria automaticamente:
 - OAuth2 integrado com Google
 - Proteção CSRF desabilitada (API REST)
 
-## 📧 Notificações por Email
+## Notificações por Email
 
 O sistema envia emails automáticos em:
 - Criação de chamado
