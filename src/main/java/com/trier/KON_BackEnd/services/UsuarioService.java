@@ -31,7 +31,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
-        if (usuarioRepository.findByDsEmail(dto.dsEmail()).isPresent()) {
+        if (usuarioRepository.findByDsEmail(dto.dsEmail().toLowerCase()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado!");
         }
 
@@ -136,6 +136,14 @@ public class UsuarioService {
         }
 
         usuarioRepository.save(usuario);
+
+        return converterParaResponse(usuario);
+    }
+
+    @Transactional
+    public UsuarioResponseDTO buscarPorId(Long cdUsuario) {
+        UsuarioModel usuario = usuarioRepository.findById(cdUsuario)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(cdUsuario));
 
         return converterParaResponse(usuario);
     }
