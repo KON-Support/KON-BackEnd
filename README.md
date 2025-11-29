@@ -1,4 +1,4 @@
-# KON Support - Sistema de Gerenciamento de Chamados
+# KON Support - Sistema de Gerenciamento de Chamados (Backend)
 
 ## Sobre o Projeto
 
