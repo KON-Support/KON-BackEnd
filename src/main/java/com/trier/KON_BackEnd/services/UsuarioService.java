@@ -31,7 +31,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
-        if (usuarioRepository.findByDsEmail(dto.dsEmail()).isPresent()) {
+        if (usuarioRepository.findByDsEmail(dto.dsEmail().toLowerCase()).isPresent()) {
             throw new RuntimeException("E-mail já cadastrado!");
         }
 
