@@ -5,7 +5,6 @@ import com.trier.KON_BackEnd.repository.UsuarioRepository;
 import com.trier.KON_BackEnd.services.OAuth2Service;
 import com.trier.KON_BackEnd.utils.JwtAuthFilter;
 import com.trier.KON_BackEnd.utils.JwtUtil;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +30,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -50,33 +50,24 @@ public class SecurityConfig {
     @Value("${frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
-    @Bean
-    public JwtUtil jwtUtil() {
-        return new JwtUtil();
-    }
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList(
-                "*",
-                "Authorization",
-                "Content-Type",
-                "X-Requested-With",
-                "Accept",
-                "Origin",
-                "Access-Control-Request-Method",
-                "Access-Control-Request-Headers",
-                "X-Forwarded-For",
-                "X-Forwarded-Proto",
-                "X-Forwarded-Host",
-                "X-Real-IP"
+        List<String> allowedOrigins = new java.util.ArrayList<>(Arrays.asList(
+                "http://localhost:*",
+                "https://localhost:*"
         ));
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(false);
+        if (frontendUrl != null && !frontendUrl.isEmpty()) {
+            allowedOrigins.add(frontendUrl.replace("http://", "*://").replace("https://", "*://"));
+        }
+        configuration.setAllowedOriginPatterns(allowedOrigins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -85,29 +76,70 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService,
-                                           ObjectProvider<JwtUtil> jwtUtilProvider) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
 
-        JwtUtil jwtUtil = jwtUtilProvider.getIfAvailable();
         JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(userDetailsService, jwtUtil);
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        .frameOptions().deny()
-                        .httpStrictTransportSecurity(hstsConfig -> hstsConfig.disable())
-                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/oauth2/**",
                                 "/oauth2/**",
                                 "/login/oauth2/code/**",
+                                "/api/usuario/cadastro",
+                                "/api/plano/listar",
+                                "/api/v1/categoria/listar/ativas",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/api/usuario/**",
+                                "/api/role/**",
+                                "/api/v1/categoria/cadastrar",
+                                "/api/v1/categoria/atualizar/**",
+                                "/api/v1/categoria/listar/todas",
+                                "/api/plano/cadastro",
+                                "/api/plano/atualizar/**",
+                                "/api/sla/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/v1/chamado/atribuir/**",
+                                "/api/v1/chamado/atualizar/status/**",
+                                "/api/v1/chamado/fechar/**",
+                                "/api/v1/chamado/listar/status/**",
+                                "/api/v1/chamado/listar/responsavel/**",
+                                "/api/v1/chamado/listar/nao-atribuidos",
+                                "/api/v1/chamado/listar/todos"
+                        ).hasAnyRole("ADMIN", "AGENTE")
+                        .requestMatchers(
+                                "/api/v1/chamado/abrir",
+                                "/api/v1/chamado/listar/{cdChamado}",
+                                "/api/v1/chamado/listar/solicitante/**",
+                                "/api/v1/comentario/**",
+                                "/api/v1/anexo/**"
+                        ).hasAnyRole("ADMIN", "AGENTE", "USER")
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (request.getRequestURI().startsWith("/api/")) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Token inválido ou ausente\"}");
+                            } else {
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            }
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"error\":\"Forbidden\",\"message\":\"Acesso negado\"}");
+                        })
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
@@ -115,13 +147,16 @@ public class SecurityConfig {
                                 OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
                                 AuthResponseDTO authResponse = oAuth2Service.processOAuthPostLogin(oAuth2User);
 
+                                String roles = authResponse.usuario().roles().stream()
+                                        .collect(Collectors.joining(","));
+
                                 String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
                                         .queryParam("token", authResponse.token())
                                         .queryParam("userId", authResponse.usuario().cdUsuario())
                                         .queryParam("userName", URLEncoder.encode(authResponse.usuario().nmUsuario(), StandardCharsets.UTF_8))
                                         .queryParam("userEmail", URLEncoder.encode(authResponse.usuario().dsEmail(), StandardCharsets.UTF_8))
-                                        .build()
-                                        .toUriString();
+                                        .queryParam("userRoles", URLEncoder.encode(roles, StandardCharsets.UTF_8))
+                                        .build().toUriString();
 
                                 response.sendRedirect(redirectUrl);
                             } catch (Exception e) {
@@ -135,8 +170,7 @@ public class SecurityConfig {
                                     String redirectUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
                                             .queryParam("tempEmail", URLEncoder.encode(email, StandardCharsets.UTF_8))
                                             .queryParam("tempName", URLEncoder.encode(name, StandardCharsets.UTF_8))
-                                            .build()
-                                            .toUriString();
+                                            .build().toUriString();
 
                                     response.sendRedirect(redirectUrl);
                                 } else {
@@ -150,9 +184,7 @@ public class SecurityConfig {
                             String errorUrl = frontendUrl + "/oauth2/redirect?error=authentication_failed";
                             response.sendRedirect(errorUrl);
                         })
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                );
 
         return http.build();
     }
@@ -169,16 +201,11 @@ public class SecurityConfig {
                     List<GrantedAuthority> authorities = usuario.getRoleModel().stream()
                             .map(role -> {
                                 String nome = role.getNmRole();
-                                String withPrefix = nome != null && nome.startsWith("ROLE_") ? nome : "ROLE_" + nome;
-                                return new SimpleGrantedAuthority(withPrefix);
+                                return new SimpleGrantedAuthority(nome != null && nome.startsWith("ROLE_") ? nome : "ROLE_" + nome);
                             })
                             .collect(Collectors.toList());
 
-                    return new User(
-                            usuario.getDsEmail(),
-                            usuario.getDsSenha(),
-                            authorities
-                    );
+                    return new User(usuario.getDsEmail(), usuario.getDsSenha(), authorities);
                 })
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
     }
@@ -187,20 +214,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
-
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
-                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
-
 }
