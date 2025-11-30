@@ -1,5 +1,6 @@
 package com.trier.KON_BackEnd.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -57,5 +58,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         response.put("erro", exception.getMessage());
 
         return ResponseEntity.status(404).body(response);
+    }
+    @ExceptionHandler(EmailJaCadastradoException.class)
+    private ResponseEntity<?> EmailJaCadastradoException(EmailJaCadastradoException exception) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }

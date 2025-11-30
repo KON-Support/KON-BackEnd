@@ -3,6 +3,7 @@ package com.trier.KON_BackEnd.services;
 import com.trier.KON_BackEnd.dto.request.AtualizarUsuarioDTO;
 import com.trier.KON_BackEnd.dto.request.UsuarioRequestDTO;
 import com.trier.KON_BackEnd.dto.response.UsuarioResponseDTO;
+import com.trier.KON_BackEnd.exception.EmailJaCadastradoException;
 import com.trier.KON_BackEnd.exception.UsuarioNaoEncontradoException;
 import com.trier.KON_BackEnd.model.PlanoModel;
 import com.trier.KON_BackEnd.model.RoleModel;
@@ -32,7 +33,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
         if (usuarioRepository.findByDsEmail(dto.dsEmail().toLowerCase()).isPresent()) {
-            throw new RuntimeException("E-mail já cadastrado!");
+            throw new EmailJaCadastradoException(dto.dsEmail());
         }
 
         UsuarioModel usuario = new UsuarioModel();
